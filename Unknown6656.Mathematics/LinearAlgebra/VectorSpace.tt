@@ -13,9 +13,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System;
 
+namespace Unknown6656.Mathematics.LinearAlgebra;
 
-namespace Unknown6656.Mathematics.LinearAlgebra
-{
+
 <#
     int maxdim = 4;
 
@@ -35,96 +35,95 @@ namespace Unknown6656.Mathematics.LinearAlgebra
         string vecname = "Vector" + dim;
         string typename = "VectorSpace" + dim;
 #>
-    public class <#=typename#>
-        : VectorSpace<<#=typename#>, <#=vecname#>, Scalar>
+public class <#=typename#>
+    : VectorSpace<<#=typename#>, <#=vecname#>, Scalar>
+{
+    #region PROERTIES
+
+    public static <#=typename#> Empty => new <#=typename#>();
+
+    public override <#=vecname#> this[params Scalar[] coefficients]
     {
-        #region PROERTIES
-
-        public static <#=typename#> Empty => new <#=typename#>();
-
-        public override <#=vecname#> this[params Scalar[] coefficients]
+        get
         {
-            get
-            {
-                if (coefficients.Length > <#=dim#>)
-                    throw new ArgumentOutOfRangeException($"A vector of the vector space '{nameof(<#=typename#>)}' can only contain a maximum of <#=dim#> coefficients.");
+            if (coefficients.Length > <#=dim#>)
+                throw new ArgumentOutOfRangeException($"A vector of the vector space '{nameof(<#=typename#>)}' can only contain a maximum of <#=dim#> coefficients.");
 
-                <#=vecname#> acc = default;
+            <#=vecname#> acc = default;
 
-                for (int i = 0, l = Math.Min(coefficients.Length, Dimension); i < l; ++i)
-                    acc += _basis[i] * coefficients[i];
+            for (int i = 0, l = Math.Min(coefficients.Length, Dimension); i < l; ++i)
+                acc += _basis[i] * coefficients[i];
 
-                return acc;
-            }
+            return acc;
         }
+    }
 
-        public <#=vecname#> this[<#=string.Join(", ", r(0, dim).Select(i => $"Scalar x{i}"))#>] => this[new[] { <#=string.Join(", ", r(0, dim).Select(i => "x" + i))#> }];
+    public <#=vecname#> this[<#=string.Join(", ", r(0, dim).Select(i => $"Scalar x{i}"))#>] => this[[<#=string.Join(", ", r(0, dim).Select(i => "x" + i))#>]];
 
-        public <#=typename#> Orthogonalized => 
+    public <#=typename#> Orthogonalized => 
 throw new NotImplementedException(); // TODO
 
-        public <#=typename#> Orthonormalized => Orthogonalized.Normalized;
+    public <#=typename#> Orthonormalized => Orthogonalized.Normalized;
 
-        #endregion
-        #region CONSTRUCTORS
+    #endregion
+    #region CONSTRUCTORS
 
-        public <#=typename#>(IEnumerable<<#=vecname#>> basis)
-            : base(basis)
-        {
-        }
-
-        public <#=typename#>(params <#=vecname#>[] basis)
-            : base(basis)
-        {
-        }
-
-        #endregion
-        #region INSTANCE METHODS
-
-        public override bool Contains(<#=vecname#> vector, out <#=vecname#> coefficients)
-        {
-            coefficients = <#=vecname#>.Zero;
-
-            if (vector.IsZero)
-                return true;
-
-            throw new NotImplementedException(); // TODO
-
-            // <#=matname#> m = <#=matname#>.FromColumns(_basis.Concat(Enumerable.Repeat(<#=vecname#>.Zero, <#=dim#> - _basis.Count)).ToArray());
-            // 
-            // coefficients = m.Solve(vector);
-            // 
-            // return ;
-        }
-
-        #endregion
-        #region STATIC METHODS
-
-        public static <#=typename#> KrylovSpace(<#=vecname#> vector, <#=matname#> matrix)
-        {
-            <#=vecname#>[] basis = new <#=vecname#>[<#=dim#>];
-
-            basis[0] = vector;
-
-            for (int i = 1; i < <#=dim#>; ++i)
-                basis[i] = matrix * basis[i - 1];
-
-            return new <#=typename#>(basis);
-        }
-
-        public static <#=typename#> FromMatrixColumns(<#=matname#> matrix) => FromVectors(matrix.Columns);
-
-        public static <#=typename#> FromMatrixRows(<#=matname#> matrix) => FromVectors(matrix.Rows);
-
-        #endregion
-        #region OPERATORS
-
-        public static implicit operator <#=typename#>(<#=vecname#> v) => new <#=typename#>(v);
-
-        #endregion
+    public <#=typename#>(IEnumerable<<#=vecname#>> basis)
+        : base(basis)
+    {
     }
+
+    public <#=typename#>(params <#=vecname#>[] basis)
+        : base(basis)
+    {
+    }
+
+    #endregion
+    #region INSTANCE METHODS
+
+    public override bool Contains(<#=vecname#> vector, out <#=vecname#> coefficients)
+    {
+        coefficients = <#=vecname#>.Zero;
+
+        if (vector.IsZero)
+            return true;
+
+        throw new NotImplementedException(); // TODO
+
+        // <#=matname#> m = <#=matname#>.FromColumns(_basis.Concat(Enumerable.Repeat(<#=vecname#>.Zero, <#=dim#> - _basis.Count)).ToArray());
+        // 
+        // coefficients = m.Solve(vector);
+        // 
+        // return ;
+    }
+
+    #endregion
+    #region STATIC METHODS
+
+    public static <#=typename#> KrylovSpace(<#=vecname#> vector, <#=matname#> matrix)
+    {
+        <#=vecname#>[] basis = new <#=vecname#>[<#=dim#>];
+
+        basis[0] = vector;
+
+        for (int i = 1; i < <#=dim#>; ++i)
+            basis[i] = matrix * basis[i - 1];
+
+        return new <#=typename#>(basis);
+    }
+
+    public static <#=typename#> FromMatrixColumns(<#=matname#> matrix) => FromVectors(matrix.Columns);
+
+    public static <#=typename#> FromMatrixRows(<#=matname#> matrix) => FromVectors(matrix.Rows);
+
+    #endregion
+    #region OPERATORS
+
+    public static implicit operator <#=typename#>(<#=vecname#> v) => new <#=typename#>(v);
+
+    #endregion
+}
 
 <#
     }
 #>
-}

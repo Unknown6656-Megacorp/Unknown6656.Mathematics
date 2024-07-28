@@ -722,7 +722,7 @@ public unsafe readonly /* ref */ partial struct <#=typename#>
 <#
         for (int i = 0; i < dim; ++i)
             WriteLine($"    /// <param name=\"diag_{i}\">The diagonal element at the position ({i}, {i}).</param>");
-#>    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#>
     public <#=typename#>(<#=string.Join(", ", r(0, dim).Select(i => $"Scalar diag_{i}"))#>)
         : this(<#=string.Join(",\n               ", r(0, dim).Select(i => string.Join(", ", r(0, dim).Select(j => j == i ? $"diag_{i}" : "0"))))#>)
     {
@@ -751,6 +751,7 @@ public unsafe readonly /* ref */ partial struct <#=typename#>
         for (int i = 2; i < maxdim; ++i)
         {
 #>
+
     public <#=typename#>(in Matrix<#=i#> matrix)
         : this(<#
             if (i < dim)
