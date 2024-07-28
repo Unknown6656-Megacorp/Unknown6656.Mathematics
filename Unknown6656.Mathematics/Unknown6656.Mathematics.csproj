@@ -49,6 +49,12 @@
         <AssemblyVersion>$([System.IO.File]::ReadAllText("$(SolutionDir)version.txt"))</AssemblyVersion>
     </PropertyGroup>
     <ItemGroup>
+        <!--<PackageReference Include="Unknown6656.DontUseVar" Version="1.0.1" />-->
+        <PackageReference Include="Unknown6656.Generics" Version="1.0.13" />
+        <PackageReference Include="Unknown6656.Currying" Version="1.1.0" />
+        <PackageReference Include="Unknown6656.IndexableProperties" Version="1.1.0" />
+    </ItemGroup>
+    <ItemGroup>
         <None Include="$(SolutionDir)unknown6656-logo-1024.png">
             <Pack>True</Pack>
             <PackagePath></PackagePath>
@@ -58,5 +64,66 @@
         <Compile Remove="old\**" />
         <EmbeddedResource Remove="old\**" />
         <None Remove="old\**" />
+    </ItemGroup>
+    <ItemGroup>
+        <None Update="Analysis\ImplicitFunction.g.tt">
+            <Generator>TextTemplatingFileGenerator</Generator>
+            <LastGenOutput>ImplicitFunction.g.cs</LastGenOutput>
+        </None>
+        <None Update="Analysis\Polynomial.Extensions.tt">
+            <Generator>TextTemplatingFileGenerator</Generator>
+            <LastGenOutput>Polynomial.Extensions.cs</LastGenOutput>
+        </None>
+        <None Update="Cryptography\HashFunctions.tt">
+            <Generator>TextTemplatingFileGenerator</Generator>
+            <LastGenOutput>HashFunctions.cs</LastGenOutput>
+        </None>
+        <None Update="LinearAlgebra\Matrix.tt">
+            <Generator>TextTemplatingFileGenerator</Generator>
+            <LastGenOutput>Matrix.cs</LastGenOutput>
+        </None>
+        <None Update="LinearAlgebra\Vector.tt">
+            <Generator>TextTemplatingFileGenerator</Generator>
+            <LastGenOutput>Vector.cs</LastGenOutput>
+        </None>
+        <None Update="LinearAlgebra\VectorSpace.tt">
+            <Generator>TextTemplatingFileGenerator</Generator>
+            <LastGenOutput>VectorSpace.cs</LastGenOutput>
+        </None>
+    </ItemGroup>
+    <ItemGroup>
+        <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+    </ItemGroup>
+    <ItemGroup>
+        <Compile Update="Analysis\ImplicitFunction.g.cs">
+            <DesignTime>True</DesignTime>
+            <AutoGen>True</AutoGen>
+            <DependentUpon>ImplicitFunction.g.tt</DependentUpon>
+        </Compile>
+        <Compile Update="Analysis\Polynomial.Extensions.cs">
+            <DesignTime>True</DesignTime>
+            <AutoGen>True</AutoGen>
+            <DependentUpon>Polynomial.Extensions.tt</DependentUpon>
+        </Compile>
+        <Compile Update="Cryptography\HashFunctions.cs">
+            <DesignTime>True</DesignTime>
+            <AutoGen>True</AutoGen>
+            <DependentUpon>HashFunctions.tt</DependentUpon>
+        </Compile>
+        <Compile Update="LinearAlgebra\Matrix.cs">
+            <DesignTime>True</DesignTime>
+            <AutoGen>True</AutoGen>
+            <DependentUpon>Matrix.tt</DependentUpon>
+        </Compile>
+        <Compile Update="LinearAlgebra\Vector.cs">
+            <DesignTime>True</DesignTime>
+            <AutoGen>True</AutoGen>
+            <DependentUpon>Vector.tt</DependentUpon>
+        </Compile>
+        <Compile Update="LinearAlgebra\VectorSpace.cs">
+            <DesignTime>True</DesignTime>
+            <AutoGen>True</AutoGen>
+            <DependentUpon>VectorSpace.tt</DependentUpon>
+        </Compile>
     </ItemGroup>
 </Project>
