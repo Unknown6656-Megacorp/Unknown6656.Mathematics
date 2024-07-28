@@ -21,7 +21,7 @@ namespace Unknown6656.Mathematics.LinearAlgebra
 
     try
     {
-        string path = Host.ResolvePath("../../maxdim.txt");
+        string path = Host.ResolvePath("../maxdim.txt");
 
         maxdim = int.Parse(File.ReadAllText(path).Trim()) + 1;
     }
