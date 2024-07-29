@@ -90,6 +90,10 @@
             <Generator>TextTemplatingFileGenerator</Generator>
             <LastGenOutput>VectorSpace.cs</LastGenOutput>
         </None>
+        <None Update="Optimization\LinearEquationSolvers.tt">
+          <Generator>TextTemplatingFileGenerator</Generator>
+          <LastGenOutput>LinearEquationSolvers.cs</LastGenOutput>
+        </None>
     </ItemGroup>
     <ItemGroup>
         <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
@@ -124,6 +128,11 @@
             <DesignTime>True</DesignTime>
             <AutoGen>True</AutoGen>
             <DependentUpon>VectorSpace.tt</DependentUpon>
+        </Compile>
+        <Compile Update="Optimization\LinearEquationSolvers.cs">
+          <DesignTime>True</DesignTime>
+          <AutoGen>True</AutoGen>
+          <DependentUpon>LinearEquationSolvers.tt</DependentUpon>
         </Compile>
     </ItemGroup>
 </Project>

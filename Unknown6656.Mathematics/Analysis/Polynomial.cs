@@ -7,7 +7,7 @@ using System.Collections;
 using System.Linq;
 using System;
 
-using Unknown6656.Optimization.ParticleSwarmOptimization;
+using Unknown6656.Mathematics.Optimization.ParticleSwarmOptimization;
 using Unknown6656.Mathematics.LinearAlgebra;
 using Unknown6656.Mathematics.Numerics;
 using Unknown6656.Generics;
