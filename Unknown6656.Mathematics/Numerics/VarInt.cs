@@ -29,9 +29,17 @@ public unsafe sealed class VarInt
 
     public override string ToString() => ToBigInteger().ToString();
 
-    private string GetDebuggerDisplay() => $"{this}     ({Size} Byte(s): {DataStream.FromBytes(InternalBytes).ToHexString(false, true)})";
+    private string GetDebuggerDisplay() => $"{this}     ({Size} Byte(s): {string.Join(" ", InternalBytes.Select(b => b.ToString("X2")))})";
 
-    public override int GetHashCode() => DataStream.FromArray(InternalBytes).Hash(HashFunction.CRC32).ToUnmanaged<int>();
+    public override int GetHashCode()
+    {
+        int hc = ~InternalBytes.Length;
+
+        foreach (byte b in InternalBytes)
+            hc = HashCode.Combine((hc << 5) + hc, b);
+
+        return hc;
+    }
 
     public override bool Equals(object? obj) => obj is VarInt other && Equals(other);
 
@@ -41,7 +49,17 @@ public unsafe sealed class VarInt
 
     public int CompareTo(object? obj) => CompareTo(obj as VarInt);
 
-    private T To<T>() where T : unmanaged => InternalBytes.Take(sizeof(T)).ToArray().BinaryCast<T>();
+    private T To<T>()
+        where T : unmanaged
+    {
+        byte[] bytes = new byte[sizeof(T)];
+
+        for (int i = 0; i < Math.Min(InternalBytes.Length, bytes.Length); ++i)
+            bytes[i] = InternalBytes[i];
+
+        fixed (byte* ptr = bytes)
+            return *(T*)ptr;
+    }
 
     public sbyte ToSByte(IFormatProvider? provider) => unchecked((sbyte)ToByte(provider));
 

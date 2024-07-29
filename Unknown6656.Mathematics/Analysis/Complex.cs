@@ -279,10 +279,6 @@ public unsafe readonly /* ref */ struct Complex
 
     public readonly Scalar[] ToArray() => new[] { _re, _im };
 
-    public readonly T[] ToArray<T>() where T : unmanaged => ToArray().CopyTo<Scalar, T>(sizeof(Complex));
-
-    public readonly void ToNative<T>(T* dst) where T : unmanaged => ToVector().ToNative(dst);
-
     public readonly Vector2 ToVector() => new(_re, _im);
 
     public readonly Matrix2 ToMatrix() => new(
