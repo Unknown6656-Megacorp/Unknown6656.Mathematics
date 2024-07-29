@@ -1677,10 +1677,6 @@ public unsafe readonly /* ref */ partial struct <#=typename#>
 
     public readonly CompressedStorageFormat<Scalar> ToCompressedStorageFormat() => CompressedStorageFormat<Scalar>.FromMatrix(this);
 
-    public readonly T[] ToArray<T>() where T : unmanaged => DataStream.FromUnmanaged(this).ToArray<T>();
-
-    public readonly void ToNative<T>(T* dst) where T : unmanaged => DataStream.FromUnmanaged(this).ToPointer(dst);
-
     public readonly IEnumerator<<#=vecname#>> GetEnumerator() => ((IEnumerable<<#=vecname#>>)Columns).GetEnumerator();
 
     readonly IEnumerator<Scalar> IEnumerable<Scalar>.GetEnumerator() => Columns.SelectMany(v => v.AsEnumerable()).GetEnumerator();

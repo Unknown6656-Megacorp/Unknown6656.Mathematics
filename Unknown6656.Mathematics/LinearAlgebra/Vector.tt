@@ -661,10 +661,6 @@ public unsafe readonly /* ref */ partial struct <#=typename#>(<#=string.Join(", 
 
     public readonly Scalar DistanceTo(in <#=typename#> second, VectorNorm norm) => Subtract(in second).ComputeNorm(norm);
 
-    public T[] ToArray<T>() where T : unmanaged => DataStream.FromUnmanaged(this).ToArray<T>();
-
-    public void ToNative<T>(T* dst) where T : unmanaged => DataStream.FromUnmanaged(this).ToPointer(dst);
-
     public readonly Scalar[] ToArray() => Coefficients;
 
     public readonly Polynomial ToPolynomial() => new(Coefficients);
