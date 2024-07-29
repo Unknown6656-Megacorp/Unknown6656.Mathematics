@@ -66,6 +66,12 @@
         <None Remove="old\**" />
     </ItemGroup>
     <ItemGroup>
+      <Compile Remove="Geometry\Shape3D.cs" />
+    </ItemGroup>
+    <ItemGroup>
+      <None Include="Geometry\Shape3D.cs" />
+    </ItemGroup>
+    <ItemGroup>
         <None Update="Analysis\ImplicitFunction.g.tt">
             <Generator>TextTemplatingFileGenerator</Generator>
             <LastGenOutput>ImplicitFunction.g.cs</LastGenOutput>
