@@ -41,8 +41,8 @@ public class DeterministicFiniteAutomaton<S, T>
 
     public DeterministicFiniteAutomaton<S, T> Minimize()
     {
-        var dic = new Dictionary<Vertex<DirectedGraph<S, IEnumerable<T>?>, S, IEnumerable<T>?>, Vertex<DirectedGraph<S, IEnumerable<T>?>, S, IEnumerable<T>?>>();
-        var copy = new DirectedGraph<S, IEnumerable<T>?>();
+        Dictionary<Vertex<DirectedGraph<S, IEnumerable<T>?>, S, IEnumerable<T>?>, Vertex<DirectedGraph<S, IEnumerable<T>?>, S, IEnumerable<T>?>> dic = new();
+        DirectedGraph<S, IEnumerable<T>?> copy = new();
         bool changes = true;
 
         foreach (var v in _graph.Vertices)

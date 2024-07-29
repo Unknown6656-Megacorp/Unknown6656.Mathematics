@@ -151,13 +151,13 @@ public static unsafe class FourierTransform
 
                 for (int i = 0; i < tm; i++)
                 {
-                    var t = rot[i];
+                    Complex t = rot[i];
 
                     for (int even = i; even < n; even += tn)
                     {
                         int odd = even + tm;
-                        var ce = data[even];
-                        var cot = data[odd] * t;
+                        Complex ce = data[even];
+                        Complex cot = data[odd] * t;
 
                         data[even] += cot;
                         data[odd] = ce - cot;

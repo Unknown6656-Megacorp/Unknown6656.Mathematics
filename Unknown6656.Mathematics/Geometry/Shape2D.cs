@@ -638,7 +638,7 @@ public sealed class Triangle2D
         );
         Vector3 b = point.ToHomogeneousCoordinates();
 
-        if ((A | b) is VectorSpace3 { IsEmpty: false, Basis: var x })
+        if ((A | b) is VectorSpace3 { IsEmpty: false, Basis: { } x })
             return x[0];
 
         return (Scalar.NaN, Scalar.NaN, Scalar.NaN);
@@ -1081,7 +1081,7 @@ public class Ellipse2D
 
     public override bool Contains(Vector2 point) => point.DistanceTo(_fp1) + point.DistanceTo(_fp2) <= Width;
 
-    public override bool Equals(Ellipse2D? other) => other is { Distance: var d, _fp1: var f1, _fp2: var f2 } && Distance.Is(d) && new[] { _fp1, _fp2 }.SetEquals(new[] { f1, f2 });
+    public override bool Equals(Ellipse2D? other) => other is { Distance: Scalar d, _fp1: Vector2 f1, _fp2: Vector2 f2 } && Distance.Is(d) && new[] { _fp1, _fp2 }.SetEquals(new[] { f1, f2 });
 
     public override Line2D? GetNormalAt(Vector2 point)
     {

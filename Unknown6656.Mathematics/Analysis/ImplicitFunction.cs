@@ -2,7 +2,7 @@
 using System;
 
 using Unknown6656.Mathematics.LinearAlgebra;
-using System.Data;
+using Unknown6656.Mathematics.Geometry;
 using Unknown6656.Generics;
 
 namespace Unknown6656.Mathematics.Analysis;
@@ -393,19 +393,17 @@ public partial class ImplicitScalarFunction2D
 
                 for (int i = 0; i < l; ++i)
                 {
-                    var curr = points[i];
-                    var next = points[(i + 1) % l];
-                    var after = points[(i + 2) % l];
+                    Vector2 curr = points[i];
+                    Vector2 next = points[(i + 1) % l];
+                    Vector2 after = points[(i + 2) % l];
 
+                    Line2D e_curr = curr.To(next);
+                    Line2D e_next = next.To(after);
+                    Line2D e_test = next.To(xy);
 
-                    var e_curr = curr.To(next);
-                    var e_next = next.To(after);
-
-                    var e_test = next.To(xy);
-
-                    var φ_next = e_curr.AngleTo(e_next);
-                    var φ_test = e_curr.AngleTo(e_test);
-                    var φ_diff = φ_test - φ_next;
+                    Scalar φ_next = e_curr.AngleTo(e_next);
+                    Scalar φ_test = e_curr.AngleTo(e_test);
+                    Scalar φ_diff = φ_test - φ_next;
 
                     val *= φ_diff;
 

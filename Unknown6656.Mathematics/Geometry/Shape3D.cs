@@ -423,7 +423,7 @@ namespace Unknown6656.Mathematics.Geometry
             );
             Vector3 b = point.ToHomogeneousCoordinates();
 
-            if ((A | b) is VectorSpace3 { IsEmpty: false, Basis: var x })
+            if ((A | b) is VectorSpace3 { IsEmpty: false, Basis: { } x })
                 return x[0];
 
             return (Scalar.NaN, Scalar.NaN, Scalar.NaN);

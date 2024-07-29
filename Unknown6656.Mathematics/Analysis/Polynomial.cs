@@ -681,8 +681,8 @@ public partial class Polynomial
         //if (Degree < 3)
         //    return ZeroPoints.OrderBy(p => Abs(p - x)).First();
 
-        var f = Cached;
-        var δ = Derivative.Cached;
+        FunctionCache<Function<Scalar, Scalar>, Scalar, Scalar> f = Cached;
+        FunctionCache<Function<Scalar, Scalar>, Scalar, Scalar> δ = Derivative.Cached;
         int iterations = 0;
         double epsilon;
 
@@ -820,11 +820,11 @@ public partial class Polynomial
             u = root(-q / 2 + D.Sqrt(), 3);
             v = root(-q / 2 - D.Sqrt(), 3);
 
-            var x2 = (real: -(u + v) / 2 + a3, imag: Sqrt(3) / 2 * (u - v));
+            Complex x2 = (-(u + v) / 2 + a3, Sqrt(3) / 2 * (u - v));
 
             yield return (u + v + a3, 0);
             yield return x2;
-            yield return (x2.real, -x2.imag);
+            yield return x2.Conjugate;
         }
         else
         {
