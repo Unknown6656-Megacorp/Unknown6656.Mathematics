@@ -24,7 +24,6 @@ using Unknown6656.Mathematics.Analysis;
 using Unknown6656.Mathematics.Numerics;
 using Unknown6656.Generics;
 using Unknown6656.Common;
-using Unknown6656.IO;
 
 namespace Unknown6656.Mathematics.LinearAlgebra;
 

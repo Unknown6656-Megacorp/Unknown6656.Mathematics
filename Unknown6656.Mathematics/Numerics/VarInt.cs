@@ -8,9 +8,9 @@ using System;
 using Unknown6656.Mathematics.LinearAlgebra;
 using Unknown6656.Mathematics.Cryptography;
 using Unknown6656.Common;
-using Unknown6656.IO;
 
 namespace Unknown6656.Mathematics.Numerics;
+
 
 [DebuggerDisplay("{" + nameof(GetDebuggerDisplay) + "(),nq}")]
 public unsafe sealed class VarInt

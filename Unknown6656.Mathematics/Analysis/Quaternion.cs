@@ -9,7 +9,6 @@ using System;
 
 using Unknown6656.Mathematics.LinearAlgebra;
 using Unknown6656.Generics;
-using Unknown6656.IO;
 
 using numquat = System.Numerics.Quaternion;
 

@@ -15,7 +15,6 @@ using System;
 
 using Unknown6656.Mathematics.Analysis;
 using Unknown6656.Generics;
-using Unknown6656.IO;
 
 namespace Unknown6656.Mathematics.LinearAlgebra;
 

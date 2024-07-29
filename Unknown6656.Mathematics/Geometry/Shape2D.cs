@@ -1,13 +1,15 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.ComponentModel;
 using System.Linq;
 using System;
 
 using Unknown6656.Mathematics.LinearAlgebra;
-using Unknown6656.Imaging.Plotting;
 using Unknown6656.Generics;
 
 namespace Unknown6656.Mathematics.Geometry;
+
+// TODO : convert to SDF shapes
 
 
 /// <summary>
@@ -15,7 +17,6 @@ namespace Unknown6656.Mathematics.Geometry;
 /// </summary>
 /// <inheritdoc/>
 public abstract class Shape2D
-    : DrawableShape
 {
     #region INSTANCE PROPERTIES
 
@@ -67,7 +68,8 @@ public abstract class Shape2D
     #endregion
     #region INTERNAL CLASSES
 
-    internal sealed class ExclusiveOrShape
+    [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
+    public sealed class ExclusiveOrShape
         : Shape2D
     {
         public Shape2D First { get; }
@@ -98,15 +100,10 @@ public abstract class Shape2D
         public override bool Contains(Vector2 point) => First.Contains(point) ^ Second.Contains(point);
 
         public override bool Touches(Vector2 point) => First.Touches(point) ^ Second.Touches(point);
-
-        protected internal override void internal_draw(RenderPass pass, RenderPassDrawMode mode)
-        {
-            Union.internal_draw(pass, mode);
-            Overlap.internal_draw(pass, mode.Invert());
-        }
     }
 
-    internal sealed class DifferenceShape
+    [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
+    public sealed class DifferenceShape
         : Shape2D
     {
         public Shape2D First { get; }
@@ -134,15 +131,10 @@ public abstract class Shape2D
         public override bool Contains(Vector2 point) => First.Contains(point) && !Second.Contains(point);
 
         public override bool Touches(Vector2 point) => throw new NotImplementedException();
-
-        protected internal override void internal_draw(RenderPass pass, RenderPassDrawMode mode)
-        {
-            First.internal_draw(pass, mode);
-            Second.internal_draw(pass, mode.Invert());
-        }
     }
 
-    internal sealed class IntersectionShape
+    [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
+    public sealed class IntersectionShape
         : Shape2D
     {
         public Shape2D First { get; }
@@ -167,11 +159,10 @@ public abstract class Shape2D
         public override bool Contains(Vector2 point) => First.Contains(point) && Second.Contains(point);
 
         public override bool Touches(Vector2 point) => throw new NotImplementedException();
-
-        protected internal override void internal_draw(RenderPass pass, RenderPassDrawMode mode) => throw new NotImplementedException();
     }
 
-    internal sealed class UnionShape
+    [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
+    public sealed class UnionShape
         : Shape2D
     {
         public Shape2D First { get; }
@@ -199,12 +190,6 @@ public abstract class Shape2D
         public override bool Contains(Vector2 point) => First.Contains(point) || Second.Contains(point);
 
         public override bool Touches(Vector2 point) => throw new NotImplementedException();
-
-        protected internal override void internal_draw(RenderPass pass, RenderPassDrawMode mode)
-        {
-            First.internal_draw(pass, mode);
-            Second.internal_draw(pass, mode);
-        }
     }
 
     #endregion
@@ -532,8 +517,6 @@ public sealed class Line2D
 
     public Vector2 Interpolate(Scalar factor) => From + (factor * Direction);
 
-    internal protected override void internal_draw(RenderPass pass, RenderPassDrawMode mode) => pass.DrawPolygon(mode, false, From, To);
-
     public override bool Equals(Line2D? other) => (From.Equals(other?.From) && To.Equals(other?.To))
                                                || (From.Equals(other?.To) && To.Equals(other?.From));
 
@@ -709,8 +692,6 @@ public sealed class Triangle2D
         return new Triangle2D(a, b, c);
     }
 
-    internal protected override void internal_draw(RenderPass pass, RenderPassDrawMode mode) => pass.DrawPolygon(mode, true, CornerA, CornerB, CornerC);
-
     public void Decompose(out Vector2 a, out Vector2 b, out Vector2 c)
     {
         a = CornerA;
@@ -735,9 +716,9 @@ public class Quadrilateral2D
 /// <para/>
 /// <code>
 /// D  C<br/>
-/// +-+ <br/>
+/// +--+ <br/>
 /// |  |<br/>
-/// +-+ <br/>
+/// +--+ <br/>
 /// A  B<br/>
 /// </code>
 /// </summary>
@@ -857,8 +838,6 @@ public class Parallelogram2D
     public override Parallelogram2D Rotate(Scalar angle) => new(BottomLeft.Rotate(angle), BottomRight.Rotate(angle), TopRight.Rotate(angle), TopLeft.Rotate(angle));
 
     public override Parallelogram2D Scale(Scalar x, Scalar y) => Transform(Matrix2.DiagonalMatrix(x, y));
-
-    internal protected override void internal_draw(RenderPass pass, RenderPassDrawMode mode) => pass.DrawPolygon(mode, true, BottomLeft, BottomRight, TopRight, TopLeft);
 
     public override Parallelogram2D TransformHomogeneous(Matrix3 matrix)
     {
@@ -1152,15 +1131,6 @@ public class Ellipse2D
         Vector2[] corners = Enumerable.Range(0, (int)count).ToArray(i => matrix.HomogeneousMultiply(Vector2.UnitX.Rotate(i / count * Scalar.Tau)));
 
         return Enumerable.Range(1, (int)triangle_count_hint).ToArray(i => new Triangle2D(corners[0], corners[i], corners[i + 1]));
-    }
-
-    protected internal override void internal_draw(RenderPass pass, RenderPassDrawMode mode)
-    {
-        const int count = 128;
-        (Matrix3 matrix, _) = GetTransformationMatrix();
-        Vector2[] corners = Enumerable.Range(0, count).ToArray(i => matrix.HomogeneousMultiply(Vector2.UnitX.Rotate(i / count * Scalar.Tau)));
-
-        pass.DrawEllipse(mode, corners);
     }
 
     internal (Matrix3 matrix, Matrix3 inverse) GetTransformationMatrix()

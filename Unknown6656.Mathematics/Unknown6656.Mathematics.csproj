@@ -53,6 +53,7 @@
         <PackageReference Include="Unknown6656.Generics" Version="1.0.13" />
         <PackageReference Include="Unknown6656.Currying" Version="1.1.0" />
         <PackageReference Include="Unknown6656.IndexableProperties" Version="1.1.0" />
+        <PackageReference Include="Unknown6656.Runtime" Version="1.0.0" />
     </ItemGroup>
     <ItemGroup>
         <None Include="$(SolutionDir)unknown6656-logo-1024.png">

@@ -8,7 +8,6 @@ using Unknown6656.Mathematics.Numerics;
 using Unknown6656.Mathematics.Analysis;
 using Unknown6656.Mathematics.Geometry;
 using Unknown6656.Generics;
-using Unknown6656.Imaging;
 
 using static System.Math;
 
@@ -678,8 +677,6 @@ public partial struct Vector3
 
 public partial struct Vector4
 {
-    public readonly RGBAColor ToRGBAColor() => (RGBAColor)this;
-
     public static implicit operator Vector4(num.Vector4 v) => new(v.X, v.Y, v.Z, v.W);
 
     public static implicit operator num.Vector4(Vector4 v) => new(v.X, v.Y, v.Z, v.W);
