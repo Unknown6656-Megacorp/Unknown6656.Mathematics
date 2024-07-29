@@ -29,7 +29,6 @@ public unsafe readonly /* ref */ partial struct Quaternion
     , Algebra<Scalar>.IVector<Quaternion>
     , Algebra<Scalar, Polynomial>.IComposite1D
     // , Algebra<Quaternion, ???>.IComposite1D
-    , INative<Quaternion>
     , IComparable<Quaternion>
     , IComparable
     , IFormattable

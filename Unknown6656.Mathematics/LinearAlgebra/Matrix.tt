@@ -59,7 +59,6 @@ namespace Unknown6656.Mathematics.LinearAlgebra;
 public unsafe readonly /* ref */ partial struct <#=typename#>
     : Algebra<Scalar>.IMatrix<<#=vecname#>, <#=typename#>>
     , Algebra<Scalar, Polynomial>.IMatrix<<#=typename#>, MatrixNM>
-    , INative<<#=typename#>>
     , IEnumerable<<#=vecname#>>
     // , Function<<#=typename#>, <#=vecname#>>
     , IEnumerable<Scalar>

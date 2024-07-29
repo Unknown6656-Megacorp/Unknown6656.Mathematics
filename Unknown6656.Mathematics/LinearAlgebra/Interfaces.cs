@@ -31,8 +31,7 @@ public interface IDisplayable
 }
 
 public interface ISerializable<@this>
-    : INative<@this>
-    , IDisplayable
+    : IDisplayable
     , ISerializable
     , IDeserializationCallback
     where @this : unmanaged, ISerializable<@this>
@@ -1571,26 +1570,6 @@ public unsafe interface IReadonlyNative
     /// <typeparam name="T">Generic pointer type</typeparam>
     /// <param name="dst">Destination pointer</param>
     void ToNative<T>(T* dst) where T : unmanaged => ToArray<T>().BinaryCopy(dst, BinarySize);
-}
-
-/// <summary>
-/// Manages the transfer of raw binary data from/to foreign pointers.
-/// </summary>
-public unsafe interface INative
-    : IReadonlyNative
-{
-    /// <summary>
-    /// Replaces the current instances's raw data with the data provided in the given pointer. This is done by copying the given pointer byte-wise into the current structure.
-    /// </summary>
-    /// <typeparam name="T">Generic pointer type</typeparam>
-    /// <param name="src">Source pointer</param>
-    void FromNative<T>(T* src) where T : unmanaged;
-    /// <summary>
-    /// Replaces the current instances's raw data with the data provided in the given array. This is done by copying the given array byte-wise into the current structure.
-    /// </summary>
-    /// <typeparam name="T">Generic array type</typeparam>
-    /// <param name="arr">Source array</param>
-    void FromArray<T>(T[] arr) where T : unmanaged;
 }
 
 /// <summary>

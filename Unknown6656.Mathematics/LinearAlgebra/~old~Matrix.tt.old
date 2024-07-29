@@ -70,7 +70,6 @@ namespace MathLibrary.LinearAlgebra
         }
 #>
 #else
-        , INative
     {
 <#
         foreach (string col in cols)

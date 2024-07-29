@@ -33,7 +33,6 @@ public unsafe readonly /* ref */ partial struct Scalar
     , Algebra<Scalar>.IVector<Scalar, Scalar>
     , Algebra<Scalar, Polynomial>.IComposite1D
     , Algebra<Scalar, Polynomial>.IMatrix<Scalar, MatrixNM>
-    , INative<Scalar>
     , IComparable<Scalar>
     , IEquatable<Scalar>
     , IComparable

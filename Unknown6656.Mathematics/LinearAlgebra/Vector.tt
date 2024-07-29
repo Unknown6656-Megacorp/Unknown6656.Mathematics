@@ -124,7 +124,6 @@ public unsafe readonly /* ref */ partial struct <#=typename#>(<#=string.Join(", 
             WriteLine($"    , Algebra<Scalar>.ICrossableVector<{typename}>");
 #>
     , Algebra<Scalar, Polynomial>.IComposite1D
-    , INative<<#=typename#>>
     , IEnumerable<Scalar>
     , IComparable<<#=typename#>>
     , IComparable
