@@ -1989,52 +1989,52 @@ public static class VectorSpaceExtensions
         => VectorSpace<Space, Vector, Scalar>.FromVectors(vectors);
 }
 
-public abstract class WritableMatrixNM<Vector, Matrix, Polynomial, Scalar>
+public abstract class MutableMatrixNM<Vector, Matrix, Polynomial, Scalar>
     : MatrixNM<Vector, Matrix, Polynomial, Scalar>
-    where Vector : WritableVectorN<Vector, Matrix, Polynomial, Scalar>
-    where Matrix : WritableMatrixNM<Vector, Matrix, Polynomial, Scalar>
+    where Vector : MutableVectorN<Vector, Matrix, Polynomial, Scalar>
+    where Matrix : MutableMatrixNM<Vector, Matrix, Polynomial, Scalar>
     where Polynomial : Polynomial<Polynomial, Scalar>
     where Scalar : unmanaged, IScalar<Scalar>, IComparable<Scalar>
 {
     public override Scalar[] FlattenedCoefficients => _coefficients;
 
 
-    public WritableMatrixNM(params Vector[] columns)
+    public MutableMatrixNM(params Vector[] columns)
         : base(columns)
     {
     }
 
-    public WritableMatrixNM(IEnumerable<Vector> columns)
+    public MutableMatrixNM(IEnumerable<Vector> columns)
         : base(columns)
     {
     }
 
-    public WritableMatrixNM(Scalar[,] values)
+    public MutableMatrixNM(Scalar[,] values)
         : base(values)
     {
     }
 
-    public WritableMatrixNM(Matrix matrix)
+    public MutableMatrixNM(Matrix matrix)
         : base(matrix)
     {
     }
 
-    public WritableMatrixNM(int columns, int rows)
+    public MutableMatrixNM(int columns, int rows)
         : base(columns, rows)
     {
     }
 
-    public WritableMatrixNM(int columns, int rows, Scalar scale)
+    public MutableMatrixNM(int columns, int rows, Scalar scale)
         : base(columns, rows, scale)
     {
     }
 
-    public WritableMatrixNM(int columns, int rows, IEnumerable<Scalar>? values)
+    public MutableMatrixNM(int columns, int rows, IEnumerable<Scalar>? values)
         : base(columns, rows, values)
     {
     }
 
-    public WritableMatrixNM(int columns, int rows, Scalar[,] values)
+    public MutableMatrixNM(int columns, int rows, Scalar[,] values)
         : base(columns, rows, values)
     {
     }
@@ -2083,32 +2083,32 @@ public abstract class WritableMatrixNM<Vector, Matrix, Polynomial, Scalar>
     }
 }
 
-public abstract class WritableVectorN<Vector, Matrix, Polynomial, Scalar>
+public abstract class MutableVectorN<Vector, Matrix, Polynomial, Scalar>
     : VectorN<Vector, Matrix, Polynomial, Scalar>
-    where Vector : WritableVectorN<Vector, Matrix, Polynomial, Scalar>
-    where Matrix : WritableMatrixNM<Vector, Matrix, Polynomial, Scalar>
+    where Vector : MutableVectorN<Vector, Matrix, Polynomial, Scalar>
+    where Matrix : MutableMatrixNM<Vector, Matrix, Polynomial, Scalar>
     where Polynomial : Polynomial<Polynomial, Scalar>
     where Scalar : unmanaged, IScalar<Scalar>, IComparable<Scalar>
 {
     public override Scalar[] Coefficients => _coefficients;
 
 
-    public WritableVectorN(in Vector vector)
+    public MutableVectorN(in Vector vector)
         : base(vector)
     {
     }
 
-    public WritableVectorN(params Scalar[] coefficients)
+    public MutableVectorN(params Scalar[] coefficients)
         : base(coefficients)
     {
     }
 
-    public WritableVectorN(IEnumerable<Scalar>? coefficients)
+    public MutableVectorN(IEnumerable<Scalar>? coefficients)
         : base(coefficients)
     {
     }
 
-    public WritableVectorN(int size, Scalar value)
+    public MutableVectorN(int size, Scalar value)
         : base(size, value)
     {
     }
@@ -2180,43 +2180,43 @@ public class VectorN<T>
     public static new VectorN<T> FromCoefficients(IEnumerable<Scalar<T>> coefficients) => new(coefficients);
 }
 
-public class WritableVectorN<T>
-    : WritableVectorN<WritableVectorN<T>, WritableMatrixNM<T>, Polynomial<T>, Scalar<T>>
-    , IVectorN<WritableVectorN<T>, Scalar<T>>
+public class MutableVectorN<T>
+    : MutableVectorN<MutableVectorN<T>, MutableMatrixNM<T>, Polynomial<T>, Scalar<T>>
+    , IVectorN<MutableVectorN<T>, Scalar<T>>
     where T : unmanaged, num.IFloatingPointIeee754<T>
 {
-    public WritableVectorN(in WritableVectorN<T> vector)
+    public MutableVectorN(in MutableVectorN<T> vector)
         : base(vector)
     {
     }
 
-    public WritableVectorN(params Scalar<T>[] coefficients)
+    public MutableVectorN(params Scalar<T>[] coefficients)
         : base(coefficients)
     {
     }
 
-    public WritableVectorN(IEnumerable<Scalar<T>>? coefficients)
+    public MutableVectorN(IEnumerable<Scalar<T>>? coefficients)
         : base(coefficients)
     {
     }
 
-    public WritableVectorN(int size, Scalar<T> value)
+    public MutableVectorN(int size, Scalar<T> value)
         : base(size, value)
     {
     }
 
 
-    public static WritableVectorN<T> FromCoefficients(params T[] coefficients) => FromCoefficients(coefficients.Select(c => new Scalar<T>(c)));
+    public static MutableVectorN<T> FromCoefficients(params T[] coefficients) => FromCoefficients(coefficients.Select(c => new Scalar<T>(c)));
 
-    public static WritableVectorN<T> FromCoefficients(IEnumerable<T> coefficients) => FromCoefficients(coefficients.Select(c => new Scalar<T>(c)));
+    public static MutableVectorN<T> FromCoefficients(IEnumerable<T> coefficients) => FromCoefficients(coefficients.Select(c => new Scalar<T>(c)));
 
-    public static new WritableVectorN<T> FromCoefficients(params Scalar<T>[] coefficients) => new(coefficients);
+    public static new MutableVectorN<T> FromCoefficients(params Scalar<T>[] coefficients) => new(coefficients);
 
-    public static new WritableVectorN<T> FromCoefficients(IEnumerable<Scalar<T>> coefficients) => new(coefficients);
+    public static new MutableVectorN<T> FromCoefficients(IEnumerable<Scalar<T>> coefficients) => new(coefficients);
 
-    public static implicit operator WritableVectorN<T>(VectorN<T> vec) => new(vec.Coefficients);
+    public static implicit operator MutableVectorN<T>(VectorN<T> vec) => new(vec.Coefficients);
 
-    public static implicit operator VectorN<T>(WritableVectorN<T> vec) => new(vec.Coefficients);
+    public static implicit operator VectorN<T>(MutableVectorN<T> vec) => new(vec.Coefficients);
 }
 
 public partial class VectorN
@@ -2373,67 +2373,67 @@ public class MatrixNM<T>
     public static new MatrixNM<T> FromColumnVectors(VectorN<T>[] columns) => new(columns);
 }
 
-public class WritableMatrixNM<T>
-    : WritableMatrixNM<WritableVectorN<T>, WritableMatrixNM<T>, Polynomial<T>, Scalar<T>>
-    , IMatrixNM<WritableVectorN<T>, WritableMatrixNM<T>, Scalar<T>>
+public class MutableMatrixNM<T>
+    : MutableMatrixNM<MutableVectorN<T>, MutableMatrixNM<T>, Polynomial<T>, Scalar<T>>
+    , IMatrixNM<MutableVectorN<T>, MutableMatrixNM<T>, Scalar<T>>
     where T : unmanaged, num.IFloatingPointIeee754<T>
 {
-    public WritableMatrixNM(params WritableVectorN<T>[] columns)
+    public MutableMatrixNM(params MutableVectorN<T>[] columns)
         : base(columns)
     {
     }
 
-    public WritableMatrixNM(IEnumerable<WritableVectorN<T>> columns)
+    public MutableMatrixNM(IEnumerable<MutableVectorN<T>> columns)
         : base(columns)
     {
     }
 
-    public WritableMatrixNM(Scalar<T>[,] values)
+    public MutableMatrixNM(Scalar<T>[,] values)
         : base(values)
     {
     }
 
-    public WritableMatrixNM(WritableMatrixNM<T> matrix)
+    public MutableMatrixNM(MutableMatrixNM<T> matrix)
         : base(matrix)
     {
     }
 
-    public WritableMatrixNM(int columns, int rows)
+    public MutableMatrixNM(int columns, int rows)
         : base(columns, rows)
     {
     }
 
-    public WritableMatrixNM(int columns, int rows, Scalar<T> scale)
+    public MutableMatrixNM(int columns, int rows, Scalar<T> scale)
         : base(columns, rows, scale)
     {
     }
 
-    public WritableMatrixNM(int columns, int rows, IEnumerable<Scalar<T>>? values)
+    public MutableMatrixNM(int columns, int rows, IEnumerable<Scalar<T>>? values)
         : base(columns, rows, values)
     {
     }
 
-    public WritableMatrixNM(int columns, int rows, Scalar<T>[] values)
+    public MutableMatrixNM(int columns, int rows, Scalar<T>[] values)
         : base(columns, rows, values)
     {
     }
 
-    protected override (WritableVectorN<T> Eigenvector, Scalar<T> Eigenvalue) DoInverseVectoriteration(Scalar<T> offset, IEqualityComparer<Scalar<T>> comparer) => throw new NotImplementedException();
+    protected override (MutableVectorN<T> Eigenvector, Scalar<T> Eigenvalue) DoInverseVectoriteration(Scalar<T> offset, IEqualityComparer<Scalar<T>> comparer) => throw new NotImplementedException();
 
 
-    public static WritableMatrixNM<T> FromCoefficients(int columns, int rows, T[] coefficients) => FromCoefficients(columns, rows, coefficients.ToArray(c => new Scalar<T>(c)));
+    public static MutableMatrixNM<T> FromCoefficients(int columns, int rows, T[] coefficients) => FromCoefficients(columns, rows, coefficients.ToArray(c => new Scalar<T>(c)));
 
-    public static WritableMatrixNM<T> FromCoefficients(T[,] coefficients) => FromCoefficients(coefficients.Select(c => new Scalar<T>(c)));
+    public static MutableMatrixNM<T> FromCoefficients(T[,] coefficients) => FromCoefficients(coefficients.Select(c => new Scalar<T>(c)));
 
-    public static new WritableMatrixNM<T> FromCoefficients(int columns, int rows, Scalar<T>[] coefficients) => new(columns, rows, coefficients);
+    public static new MutableMatrixNM<T> FromCoefficients(int columns, int rows, Scalar<T>[] coefficients) => new(columns, rows, coefficients);
 
-    public static new WritableMatrixNM<T> FromCoefficients(Scalar<T>[,] coefficients) => new(coefficients);
+    public static new MutableMatrixNM<T> FromCoefficients(Scalar<T>[,] coefficients) => new(coefficients);
 
-    public static new WritableMatrixNM<T> FromColumnVectors(WritableVectorN<T>[] columns) => new(columns);
+    public static new MutableMatrixNM<T> FromColumnVectors(MutableVectorN<T>[] columns) => new(columns);
 
-    public static implicit operator WritableMatrixNM<T>(MatrixNM<T> mat) => new(mat.Coefficients);
+    public static implicit operator MutableMatrixNM<T>(MatrixNM<T> mat) => new(mat.Coefficients);
 
-    public static implicit operator MatrixNM<T>(WritableMatrixNM<T> mat) => new(mat.Coefficients);
+    public static implicit operator MatrixNM<T>(MutableMatrixNM<T> mat) => new(mat.Coefficients);
 }
 
 // TODO : cast matrix to complexmatrix
