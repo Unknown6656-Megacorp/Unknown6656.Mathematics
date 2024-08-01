@@ -126,7 +126,7 @@ public class KMeansClustering<Item>
         double[,] means = new double[K, dim];
         XorShift random = new();
 
-        Parallel.For(0, count, i => clustering[i] = i < K ? i : random.NextInt(0, K));
+        Parallel.For(0, count, i => clustering[i] = i < K ? i : random.Next(0, K));
 
         bool changed = true;
         bool success = true;

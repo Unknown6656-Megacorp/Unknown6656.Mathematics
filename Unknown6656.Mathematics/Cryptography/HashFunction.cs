@@ -1,4 +1,4 @@
-using System.Runtime.CompilerServices;
+﻿using System.Runtime.CompilerServices;
 using System.Text;
 using System.Linq;
 using System.IO;
@@ -141,7 +141,7 @@ public sealed unsafe class OAEP<Hash, Random>
         byte[] result = new byte[sz_m + hashsz];
 
         lock (RandomGenerator)
-            RandomGenerator.Fill(result, sz_m, hashsz);
+            RandomGenerator.NextBytes(result, sz_m, hashsz);
 
         fixed (byte* ptr = result)
             *(int*)ptr = length;

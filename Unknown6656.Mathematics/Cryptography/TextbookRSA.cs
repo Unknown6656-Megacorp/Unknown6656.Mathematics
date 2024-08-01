@@ -41,7 +41,7 @@ public unsafe class TextbookRSA
 
     public static (ModuloRing @public, ModuloRing @private) GenerateKeyPair()
     {
-        static bint random_prime() => MathExtensions._primes[Numerics.Random.XorShift.NextInt(0, MathExtensions._primes.Length)];
+        static bint random_prime() => MathExtensions._primes[Numerics.Random.XorShift.Next(0, MathExtensions._primes.Length)];
         static (bint N, ModuloRing e) GenPublicKey()
         {
             bint P = random_prime();
