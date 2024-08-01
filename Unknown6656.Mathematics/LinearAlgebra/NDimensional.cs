@@ -2156,7 +2156,7 @@ public abstract class WritableVectorN<Vector, Matrix, Polynomial, Scalar>
 public class VectorN<T>
     : VectorN<VectorN<T>, MatrixNM<T>, Polynomial<T>, Scalar<T>>
     , IVectorN<VectorN<T>, Scalar<T>>
-    where T : unmanaged, IComparable<T>
+    where T : unmanaged, num.IFloatingPointIeee754<T>
 {
     public VectorN(in VectorN<T> vector)
         : base(vector)
@@ -2191,7 +2191,7 @@ public class VectorN<T>
 public class WritableVectorN<T>
     : WritableVectorN<WritableVectorN<T>, WritableMatrixNM<T>, Polynomial<T>, Scalar<T>>
     , IVectorN<WritableVectorN<T>, Scalar<T>>
-    where T : unmanaged, IComparable<T>
+    where T : unmanaged, num.IFloatingPointIeee754<T>
 {
     public WritableVectorN(in WritableVectorN<T> vector)
         : base(vector)
@@ -2325,7 +2325,7 @@ public class ComplexVectorN
 public class MatrixNM<T>
     : MatrixNM<VectorN<T>, MatrixNM<T>, Polynomial<T>, Scalar<T>>
     , IMatrixNM<VectorN<T>, MatrixNM<T>, Scalar<T>>
-    where T : unmanaged, IComparable<T>
+    where T : unmanaged, num.IFloatingPointIeee754<T>
 {
     public MatrixNM(params VectorN<T>[] columns)
         : base(columns)
@@ -2384,7 +2384,7 @@ public class MatrixNM<T>
 public class WritableMatrixNM<T>
     : WritableMatrixNM<WritableVectorN<T>, WritableMatrixNM<T>, Polynomial<T>, Scalar<T>>
     , IMatrixNM<WritableVectorN<T>, WritableMatrixNM<T>, Scalar<T>>
-    where T : unmanaged, IComparable<T>
+    where T : unmanaged, num.IFloatingPointIeee754<T>
 {
     public WritableMatrixNM(params WritableVectorN<T>[] columns)
         : base(columns)

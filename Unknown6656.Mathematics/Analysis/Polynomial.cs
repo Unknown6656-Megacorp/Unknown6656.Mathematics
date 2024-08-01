@@ -627,7 +627,7 @@ public class ComplexPolynomial
 
 public class Polynomial<T>
     : Polynomial<Polynomial<T>, Scalar<T>>
-    where T : unmanaged, IComparable<T>
+    where T : unmanaged, num.IFloatingPointIeee754<T>
 {
     public Polynomial(params Scalar<T>[] coefficients)
         : base(coefficients)
