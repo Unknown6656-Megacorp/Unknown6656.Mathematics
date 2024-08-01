@@ -1,5 +1,19 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
+        <!-- change the following for different precisions. if all are commented out, every configuration will be built. -->
+
+        <!--<Scalar>F16</Scalar>-->
+        <!--<Scalar>F32</Scalar>-->
+        <Scalar>F64</Scalar>
+        <DefineConstants>$(DefineConstants);$(Scalar)</DefineConstants>
+    </PropertyGroup>
+    <!--<Target Name="BuildOthers" BeforeTargets="DispatchToInnerBuilds" Condition="'$(Scalar)' == ''">-->
+    <Target Name="BuildOthers" BeforeTargets="CoreBuild" Condition="'$(Scalar)' == ''">
+        <MSBuild Projects="$(MSBuildProjectFile)" Properties="Configuration=$(Configuration);Scalar=F16" />
+        <MSBuild Projects="$(MSBuildProjectFile)" Properties="Configuration=$(Configuration);Scalar=F32" />
+        <MSBuild Projects="$(MSBuildProjectFile)" Properties="Configuration=$(Configuration);Scalar=F64" />
+    </Target>
+    <PropertyGroup>
         <TargetFramework>net8.0</TargetFramework>
 
         <LangVersion>preview</LangVersion>
