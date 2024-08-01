@@ -1,4 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
@@ -19,14 +19,8 @@ using Unknown6656.Common;
 namespace Unknown6656.Mathematics.LinearAlgebra;
 
 
-#if DOUBLE_PRECISION
-using __scalar = Double;
-#else
-using __scalar = Single;
-#endif
-
 [StructLayout(LayoutKind.Sequential, Size = sizeof(__scalar), Pack = sizeof(__scalar)), NativeCppClass, Serializable, CLSCompliant(false)]
-public unsafe readonly /* ref */ partial struct Scalar
+public unsafe readonly partial struct Scalar
     : IScalar<Scalar>
     , Algebra<Scalar>.IMatrix<Scalar, Scalar>
     , Algebra<Scalar>.IVector<Scalar, Scalar>
@@ -62,11 +56,11 @@ public unsafe readonly /* ref */ partial struct Scalar
     #region STATIC PROPERTIES
 
 #pragma warning disable IDE1006
-    public static Scalar e { get; } = Math.E;
+    public static Scalar e { get; } = __scalar.E;
 
-    public static Scalar π { get; } = Math.PI;
+    public static Scalar π { get; } = __scalar.Pi;
 
-    public static Scalar τ { get; } = Math.PI * 2;
+    public static Scalar τ { get; } = __scalar.Tau;
 #pragma warning restore IDE1006
     public static Scalar Pi { get; } = π;
 
@@ -74,7 +68,7 @@ public unsafe readonly /* ref */ partial struct Scalar
 
     public static Scalar PiHalf { get; } = π * .5;
 
-    public static Scalar Sqrt2 { get; } = Math.Sqrt(2);
+    public static Scalar Sqrt2 { get; } = __scalar.Sqrt(2);
 
     public static Scalar GoldenRatio { get; } = 1.618033988749894848204586834;
 
@@ -189,11 +183,11 @@ public unsafe readonly /* ref */ partial struct Scalar
 
     public readonly Scalar DecimalPlaces => Subtract(Floor);
 
-    public readonly Scalar Floor => new(Math.Floor(Determinant));
+    public readonly Scalar Floor => new(__scalar.Floor(Determinant));
 
-    public readonly Scalar Ceiling => new(Math.Ceiling(Determinant));
+    public readonly Scalar Ceiling => new(__scalar.Ceiling(Determinant));
 
-    public readonly Scalar Rounded => new(Math.Round(Determinant));
+    public readonly Scalar Rounded => new(__scalar.Round(Determinant));
 
     public readonly bool IsInteger => Is(Floor);
 
@@ -372,7 +366,7 @@ public unsafe readonly /* ref */ partial struct Scalar
         _ => Power(new Scalar((__scalar)e)),
     };
 
-    public readonly Scalar Power(Scalar e) => new(Math.Pow(Determinant, e.Determinant));
+    public readonly Scalar Power(Scalar e) => new(__scalar.Pow(Determinant, e.Determinant));
 
     public readonly Scalar Factorial()
     {
@@ -395,19 +389,23 @@ public unsafe readonly /* ref */ partial struct Scalar
             return ScalarFunction.Gamma[this];
     }
 
-    public readonly Scalar Sqrt() => new(Math.Sqrt(Determinant));
+    public readonly Scalar Sqrt() => new(__scalar.Sqrt(Determinant));
 
-    public readonly Scalar Exp() => new(Math.Exp(Determinant));
+    public readonly Scalar Cbrt() => new(__scalar.Cbrt(Determinant));
 
-    public readonly Scalar Log() => new(Math.Log(Determinant));
+    public readonly Scalar RootN(int n) => new(__scalar.RootN(Determinant, n));
+
+    public readonly Scalar Exp() => new(__scalar.Exp(Determinant));
+
+    public readonly Scalar Log() => new(__scalar.Log(Determinant));
 
     public readonly Scalar Sinc() => Sin(Multiply(Pi)).Divide(Tau);
 
-    public readonly Scalar Sin() => new(Math.Sin(Determinant));
+    public readonly Scalar Sin() => new(__scalar.Sin(Determinant));
 
-    public readonly Scalar Cos() => new(Math.Cos(Determinant));
+    public readonly Scalar Cos() => new(__scalar.Cos(Determinant));
 
-    public readonly Scalar Tan() => new(Math.Tan(Determinant));
+    public readonly Scalar Tan() => new(__scalar.Tan(Determinant));
 
     public readonly Scalar Cot() => Tan().MultiplicativeInverse;
 
@@ -417,11 +415,11 @@ public unsafe readonly /* ref */ partial struct Scalar
 
     public readonly Complex Cis() => Complex.Cis(this);
 
-    public readonly Scalar Asin() => new(Math.Asin(Determinant));
+    public readonly Scalar Asin() => new(__scalar.Asin(Determinant));
 
-    public readonly Scalar Acos() => new(Math.Acos(Determinant));
+    public readonly Scalar Acos() => new(__scalar.Acos(Determinant));
 
-    public readonly Scalar Atan() => new(Math.Atan(Determinant));
+    public readonly Scalar Atan() => new(__scalar.Atan(Determinant));
 
     public readonly Scalar Acot() => MultiplicativeInverse.Atan();
 
@@ -429,11 +427,11 @@ public unsafe readonly /* ref */ partial struct Scalar
 
     public readonly Scalar Acsc() => MultiplicativeInverse.Asin();
 
-    public readonly Scalar Sinh() => new(Math.Sinh(Determinant));
+    public readonly Scalar Sinh() => new(__scalar.Sinh(Determinant));
 
-    public readonly Scalar Cosh() => new(Math.Cosh(Determinant));
+    public readonly Scalar Cosh() => new(__scalar.Cosh(Determinant));
 
-    public readonly Scalar Tanh() => new(Math.Tanh(Determinant));
+    public readonly Scalar Tanh() => new(__scalar.Tanh(Determinant));
 
     public readonly Scalar Coth() => Tanh().MultiplicativeInverse;
 
@@ -441,11 +439,11 @@ public unsafe readonly /* ref */ partial struct Scalar
 
     public readonly Scalar Csch() => Sinh().MultiplicativeInverse;
 
-    public readonly Scalar Asinh() => Power(2).Increment().Sqrt().Add(this).Log();
+    public readonly Scalar Asinh() => new(__scalar.Asinh(Determinant));
 
-    public readonly Scalar Acosh() => Add(Decrement().Sqrt().Multiply(Increment().Sqrt())).Log();
+    public readonly Scalar Acosh() => new(__scalar.Acosh(Determinant));
 
-    public readonly Scalar Atanh() => Increment().Log().Subtract(One.Subtract(this).Log()).Divide(Two);
+    public readonly Scalar Atanh() => new(__scalar.Atanh(Determinant));
 
     public readonly Scalar Acoth() => MultiplicativeInverse.Atanh();
 
@@ -455,7 +453,7 @@ public unsafe readonly /* ref */ partial struct Scalar
 
     public readonly Scalar Clamp() => Clamp(Zero, One);
 
-    public readonly Scalar Clamp(Scalar low, Scalar high) => Min(high).Max(low);
+    public readonly Scalar Clamp(Scalar low, Scalar high) => __scalar.Clamp(Determinant, low, high);
 
     public readonly Scalar Min(Scalar second) => CompareTo(second) <= 0 ? this : second;
 
@@ -600,11 +598,7 @@ public unsafe readonly /* ref */ partial struct Scalar
 
     public readonly Fraction ToFraction(Scalar accuracy) => Fraction.FromScalar(this, accuracy);
 
-    public readonly Scalar[] ToArray() => new[] { this };
-
-    public readonly T[] ToArray<T>() where T : unmanaged => ToArray().CopyTo<Scalar, T>();
-
-    public readonly void ToNative<T>(T* dst) where T : unmanaged => ToArray().CopyTo(dst);
+    public readonly Scalar[] ToArray() => [this];
 
     public readonly Polynomial ToPolynomial() => new(this);
 
@@ -732,11 +726,15 @@ public unsafe readonly /* ref */ partial struct Scalar
 
     public static Scalar Sqrt(Scalar s) => s.Sqrt();
 
+    public static Scalar Cbrt(Scalar s) => s.Cbrt();
+
+    public static Scalar RootN(Scalar s, int n) => s.RootN(n);
+
     public static Scalar Exp(Scalar s) => s.Exp();
 
     public static Scalar Log(Scalar s) => s.Log();
 
-    public static Scalar Log(Scalar s, Scalar basis) => new(Math.Log(s.Determinant, basis.Determinant));
+    public static Scalar Log(Scalar s, Scalar basis) => new(__scalar.Log(s.Determinant, basis.Determinant));
 
     public static Scalar Sinc(Scalar s) => s.Sinc();
 
@@ -760,7 +758,7 @@ public unsafe readonly /* ref */ partial struct Scalar
 
     public static Scalar Atan(Scalar s) => s.Atan();
 
-    public static Scalar Atan2(Scalar y, Scalar x) => Math.Atan2(y, x);
+    public static Scalar Atan2(Scalar y, Scalar x) => __scalar.Atan2(y, x);
 
     public static Scalar Acot(Scalar s) => s.Acot();
 
@@ -1036,34 +1034,10 @@ public unsafe readonly /* ref */ partial struct Scalar
 
 
     #endregion
-
-    /*
-
-    public void ToNative<T>(T* dst)
-        where T : unmanaged
-    {
-        byte* pdst = (byte*)dst;
-
-        fixed (Scalar* ptr = &this)
-            for (int i = 0; i < BinarySize; ++i)
-                pdst[i] = *((byte*)ptr + i);
-    }
-
-    public void FromNative<T>(T* src)
-        where T : unmanaged
-    {
-        byte* psrc = (byte*)src;
-
-        fixed (Scalar* ptr = &this)
-            for (int i = 0; i < BinarySize; ++i)
-                *((byte*)ptr + i) = psrc[i];
-    }
-
-    */
 }
 
 [StructLayout(LayoutKind.Sequential), NativeCppClass, Serializable, CLSCompliant(false)]
-public unsafe readonly /* ref */ partial struct Scalar<T>
+public unsafe readonly partial struct Scalar<T>
     : IScalar<Scalar<T>>
     , Algebra<Scalar<T>>.IMatrix<Scalar<T>, Scalar<T>>
     , Algebra<Scalar<T>>.IVector<Scalar<T>, Scalar<T>>
@@ -1073,7 +1047,7 @@ public unsafe readonly /* ref */ partial struct Scalar<T>
     , IEquatable<Scalar<T>>
     , IComparable
     , ICloneable
-    where T : unmanaged, IComparable<T>
+    where T : unmanaged, num.IFloatingPointIeee754<T>
 {
     #region STATIC FIELDS
 
@@ -1228,13 +1202,13 @@ public unsafe readonly /* ref */ partial struct Scalar<T>
 
     readonly Polynomial<T> Algebra<Scalar<T>, Polynomial<T>>.IMatrix.CharacteristicPolynomial => new(this, NegativeOne);
 
-    readonly Scalar<T>[] Algebra<Scalar<T>>.IMatrix.Eigenvalues => IsZero ? [] : new[] { this };
+    readonly Scalar<T>[] Algebra<Scalar<T>>.IMatrix.Eigenvalues => IsZero ? [] : [this];
 
     readonly int Algebra<Scalar<T>>.IMatrix.Rank => IsZero ? 0 : 1;
 
     readonly Scalar<T>[,] Algebra<Scalar<T>>.IComposite2D.Coefficients => new[,] { { this } };
 
-    readonly IEnumerable<Scalar<T>> Algebra<Scalar<T>>.IComposite2D.FlattenedCoefficients => new[] { this };
+    readonly IEnumerable<Scalar<T>> Algebra<Scalar<T>>.IComposite2D.FlattenedCoefficients => [this];
 
     readonly (int Columns, int Rows) Algebra<Scalar<T>>.IComposite2D.Dimensions => (1, 1);
 
@@ -1258,15 +1232,15 @@ public unsafe readonly /* ref */ partial struct Scalar<T>
 
     readonly Scalar<T> Algebra<Scalar<T>>.IMetricVectorSpace.Length => this;
 
-    readonly Scalar<T>[] Algebra<Scalar<T>>.IComposite1D.Coefficients => new[] { this };
+    readonly Scalar<T>[] Algebra<Scalar<T>>.IComposite1D.Coefficients => [this];
 
     readonly int Algebra<Scalar<T>>.IComposite1D.Dimension => 1;
 
-    readonly Scalar<T> Algebra<Scalar<T>>.IMatrix<Scalar<T>, Scalar<T>>.MainDiagonal => throw new NotImplementedException();
+    readonly Scalar<T> Algebra<Scalar<T>>.IMatrix<Scalar<T>, Scalar<T>>.MainDiagonal => this;
 
-    readonly Scalar<T>[] Algebra<Scalar<T>>.IMatrix<Scalar<T>, Scalar<T>>.Columns => throw new NotImplementedException();
+    readonly Scalar<T>[] Algebra<Scalar<T>>.IMatrix<Scalar<T>, Scalar<T>>.Columns => [this];
 
-    readonly Scalar<T>[] Algebra<Scalar<T>>.IMatrix<Scalar<T>, Scalar<T>>.Rows => throw new NotImplementedException();
+    readonly Scalar<T>[] Algebra<Scalar<T>>.IMatrix<Scalar<T>, Scalar<T>>.Rows => [this];
 
     readonly Scalar<T> Algebra<Scalar<T>>.IVector<Scalar<T>, Scalar<T>>.HouseholderMatrix => throw new NotImplementedException();
 
@@ -1440,17 +1414,21 @@ public unsafe readonly /* ref */ partial struct Scalar<T>
 
     public readonly Scalar<T> Abs() => IsNegative ? Negate() : this;
 
-    public readonly Scalar<T> Sqrt() => MathFunction(Math.Sqrt);
+    public readonly Scalar<T> Sqrt() => new(T.Sqrt(Value));
 
-    public readonly Scalar<T> Exp() => MathFunction(Math.Exp);
+    public readonly Scalar<T> Cbrt() => new(T.Cbrt(Value));
 
-    public readonly Scalar<T> Log() => MathFunction(Math.Log);
+    public readonly Scalar<T> RootN(int n) => new(T.RootN(Value, n));
 
-    public readonly Scalar<T> Sin() => MathFunction(Math.Sin);
+    public readonly Scalar<T> Exp() => new(T.Exp(Value));
 
-    public readonly Scalar<T> Cos() => MathFunction(Math.Cos);
+    public readonly Scalar<T> Log() => new(T.Log(Value));
 
-    public readonly Scalar<T> Tan() => MathFunction(Math.Tan);
+    public readonly Scalar<T> Sin() => new(T.Sin(Value));
+
+    public readonly Scalar<T> Cos() => new(T.Cos(Value));
+
+    public readonly Scalar<T> Tan() => new(T.Tan(Value));
 
     public readonly Scalar<T> Cot() => Tan().MultiplicativeInverse;
 
@@ -1458,11 +1436,11 @@ public unsafe readonly /* ref */ partial struct Scalar<T>
 
     public readonly Scalar<T> Csc() => Sin().MultiplicativeInverse;
 
-    public readonly Scalar<T> Asin() => MathFunction(Math.Asin);
+    public readonly Scalar<T> Asin() => new(T.Asin(Value));
 
-    public readonly Scalar<T> Acos() => MathFunction(Math.Acos);
+    public readonly Scalar<T> Acos() => new(T.Acos(Value));
 
-    public readonly Scalar<T> Atan() => MathFunction(Math.Atan);
+    public readonly Scalar<T> Atan() => new(T.Atan(Value));
 
     public readonly Scalar<T> Acot() => MultiplicativeInverse.Atan();
 
@@ -1470,11 +1448,11 @@ public unsafe readonly /* ref */ partial struct Scalar<T>
 
     public readonly Scalar<T> Acsc() => MultiplicativeInverse.Asec();
 
-    public readonly Scalar<T> Sinh() => MathFunction(Math.Sinh);
+    public readonly Scalar<T> Sinh() => new(T.Sinh(Value));
 
-    public readonly Scalar<T> Cosh() => MathFunction(Math.Cosh);
+    public readonly Scalar<T> Cosh() => new(T.Cosh(Value));
 
-    public readonly Scalar<T> Tanh() => MathFunction(Math.Tanh);
+    public readonly Scalar<T> Tanh() => new(T.Tanh(Value));
 
     public readonly Scalar<T> Coth() => Tanh().MultiplicativeInverse;
 
@@ -1482,11 +1460,11 @@ public unsafe readonly /* ref */ partial struct Scalar<T>
 
     public readonly Scalar<T> Csch() => Sinh().MultiplicativeInverse;
 
-    public readonly Scalar<T> Asinh() => Power(2).Increment().Sqrt().Add(this).Log();
+    public readonly Scalar<T> Asinh() => new(T.Asinh(Value));
 
-    public readonly Scalar<T> Acosh() => Add(Decrement().Sqrt().Multiply(Increment().Sqrt())).Log();
+    public readonly Scalar<T> Acosh() => new(T.Acosh(Value));
 
-    public readonly Scalar<T> Atanh() => Increment().Log().Subtract(One.Subtract(this).Log()).Divide(Two);
+    public readonly Scalar<T> Atanh() => new(T.Atanh(Value));
 
     public readonly Scalar<T> Acoth() => MultiplicativeInverse.Atanh();
 
@@ -1791,7 +1769,7 @@ public sealed class ScalarEqualityComparer
 public sealed class ScalarEqualityComparer<T>
     : IEqualityComparer<Scalar<T>>
     , IEqualityComparer<T>
-    where T : unmanaged, IComparable<T>
+    where T : unmanaged, num.IFloatingPointIeee754<T>
 {
     /// <inheritdoc cref="Scalar{T}.Equals(Scalar{T})"/>
     public bool Equals(Scalar<T> x, Scalar<T> y) => x.Is(y);
