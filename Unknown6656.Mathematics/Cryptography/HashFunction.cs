@@ -1,4 +1,4 @@
-﻿using System.Runtime.CompilerServices;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Linq;
 using System.IO;
@@ -62,6 +62,8 @@ public static partial class HashFunction
     public static CRC32Hash CRC32 { get; } = new CRC32Hash();
 }
 
+// TODO : add the crypto hash functions
+
 public sealed class CRC32Hash
     : HashFunction<CRC32Hash>
 {
@@ -107,7 +109,12 @@ public sealed class CRC32Hash
 
         c ^= 0xffffffff;
 
-        return c.BinaryCast().Reverse().ToArray();
+        return [
+            (byte)(c >> 24),
+            (byte)(c >> 16),
+            (byte)(c >> 8),
+            (byte)c
+        ];
     }
 }
 

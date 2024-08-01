@@ -293,10 +293,7 @@ public static unsafe class FourierTransform
 
                 if (s > i)
                 {
-                    Complex t = data[i];
-
-                    data[i] = data[s];
-                    data[s] = t;
+                    (data[s], data[i]) = (data[i], data[s]);
                 }
             }
     }

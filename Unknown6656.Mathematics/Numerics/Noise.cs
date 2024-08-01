@@ -75,11 +75,9 @@ public sealed class PerlinNoise
 
         for (int i = 0; i < perm.Length; ++i)
         {
-            int source = RandomNumberGenerator.NextInt(perm.Length);
-            int t = perm[i];
+            int source = RandomNumberGenerator.Next(perm.Length);
 
-            perm[i] = perm[source];
-            perm[source] = t;
+            (perm[source], perm[i]) = (perm[i], perm[source]);
         }
 
         return perm;

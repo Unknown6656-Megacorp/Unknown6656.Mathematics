@@ -472,11 +472,7 @@ public unsafe abstract class VectorN<Vector, Matrix, Polynomial, Scalar>
         // TODO : range checks
 
         Scalar[] t = Coefficients;
-        Scalar tmp = t[src_idx];
-
-        t[src_idx] = t[dst_idx];
-        t[dst_idx] = tmp;
-
+        (t[dst_idx], t[src_idx]) = (t[src_idx], t[dst_idx]);
         return FromArray(t);
     }
 
@@ -2144,11 +2140,7 @@ public abstract class WritableVectorN<Vector, Matrix, Polynomial, Scalar>
     {
         // TODO : range checks
 
-        Scalar tmp = _coefficients[src_idx];
-
-        _coefficients[src_idx] = _coefficients[dst_idx];
-        _coefficients[dst_idx] = tmp;
-
+        (_coefficients[dst_idx], _coefficients[src_idx]) = (_coefficients[src_idx], _coefficients[dst_idx]);
         return this;
     }
 }
