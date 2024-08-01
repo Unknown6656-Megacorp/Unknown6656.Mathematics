@@ -37,8 +37,6 @@ Use one of the follwing methods to install and use this library:
     ```
 
 ## Documentation and Usage
-To use the discriminated unions, simply include the namespace `Unknown6656.Mathematics`:
-
 ```csharp
 using Unknown6656.Mathematics;
 ```
