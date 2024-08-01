@@ -6,8 +6,8 @@ using System;
 
 using Unknown6656.Common;
 
-
 namespace Unknown6656.Mathematics.Cryptography;
+
 
 public abstract class StringCipher
 {
@@ -66,17 +66,31 @@ public abstract class BinaryCipher
         return Decrypt(key, ms.ToArray());
     }
 
-    public virtual byte[] Encrypt<T>(byte[] key, T message) where T : unmanaged => Encrypt(key, message.BinaryCast());
+    public virtual unsafe byte[] Encrypt<T>(byte[] key, T message)
+    {
+        byte[] plain = new byte[sizeof(T)];
 
-    public virtual T Decrypt<T>(byte[] key, byte[] cipher) where T : unmanaged => Decrypt(key, cipher).BinaryCast<T>();
+        fixed (byte* ptr = plain)
+            *(T*)ptr = message;
 
-    public virtual byte[] Encrypt<T>(string key, T message) where T : unmanaged => Encrypt(key, message, DefaultEncoding);
+        return Encrypt(key, message);
+    }
 
-    public virtual T Decrypt<T>(string key, byte[] cipher) where T : unmanaged => Decrypt<T>(key, cipher, DefaultEncoding);
+    public virtual unsafe T Decrypt<T>(byte[] key, byte[] cipher)
+    {
+        byte[] plain = Decrypt(key, cipher);
 
-    public virtual byte[] Encrypt<T>(string key, T message, Encoding encoding) where T : unmanaged => Encrypt(encoding.GetBytes(key), message);
+        fixed (byte* ptr = plain)
+            return *(T*)ptr;
+    }
 
-    public virtual T Decrypt<T>(string key, byte[] cipher, Encoding encoding) where T : unmanaged => Decrypt<T>(encoding.GetBytes(key), cipher);
+    public virtual byte[] Encrypt<T>(string key, T message) => Encrypt(key, message, DefaultEncoding);
+
+    public virtual T Decrypt<T>(string key, byte[] cipher) => Decrypt<T>(key, cipher, DefaultEncoding);
+
+    public virtual byte[] Encrypt<T>(string key, T message, Encoding encoding) => Encrypt(encoding.GetBytes(key), message);
+
+    public virtual T Decrypt<T>(string key, byte[] cipher, Encoding encoding) => Decrypt<T>(encoding.GetBytes(key), cipher);
 
     public override string Encrypt(string key, string message) => Encrypt(key, message, DefaultEncoding);
 
