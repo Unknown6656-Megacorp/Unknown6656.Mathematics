@@ -11,7 +11,7 @@ namespace Unknown6656.Mathematics.LinearAlgebra;
 
 
 [StructLayout(LayoutKind.Sequential), NativeCppClass, Serializable, CLSCompliant(false)]
-public unsafe readonly /* ref */ partial struct ModuloRing
+public unsafe readonly partial struct ModuloRing
     : IField<ModuloRing>
     , INumericScalar<ModuloRing>
     , IComparable

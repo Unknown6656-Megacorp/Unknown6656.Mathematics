@@ -55,7 +55,7 @@ namespace Unknown6656.Mathematics.LinearAlgebra;
 /// </summary>
 /// <inheritdoc cref="IMatrix{M,V,S}"/>
 [StructLayout(LayoutKind.Sequential), NativeCppClass, Serializable, CLSCompliant(false)]
-public unsafe readonly /* ref */ partial struct <#=typename#>
+public unsafe readonly partial struct <#=typename#>
     : Algebra<Scalar>.IMatrix<<#=vecname#>, <#=typename#>>
     , Algebra<Scalar, Polynomial>.IMatrix<<#=typename#>, MatrixNM>
     , IEnumerable<<#=vecname#>>

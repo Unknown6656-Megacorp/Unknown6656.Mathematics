@@ -23,7 +23,7 @@ namespace Unknown6656.Mathematics.Analysis;
 /// <c>w = cos(theta/2)</c>
 /// </remarks>
 [StructLayout(LayoutKind.Sequential), NativeCppClass, Serializable, CLSCompliant(false)]
-public unsafe readonly /* ref */ partial struct Quaternion
+public unsafe readonly partial struct Quaternion
     : IScalar<Quaternion>
     , Algebra<Scalar>.IVector<Quaternion>
     , Algebra<Scalar, Polynomial>.IComposite1D

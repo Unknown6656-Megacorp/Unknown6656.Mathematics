@@ -17,7 +17,7 @@ namespace Unknown6656.Mathematics.Analysis;
 
 
 [StructLayout(LayoutKind.Sequential), NativeCppClass]
-public unsafe readonly /* ref */ struct Complex
+public unsafe readonly struct Complex
     : IScalar<Complex>
     , Algebra<Scalar>.IVector<Complex>
     , Algebra<Scalar, Polynomial>.IComposite1D
