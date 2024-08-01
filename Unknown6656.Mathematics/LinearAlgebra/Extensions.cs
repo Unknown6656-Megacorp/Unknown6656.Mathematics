@@ -606,8 +606,6 @@ public partial struct Vector3
     }
 
 
-    public readonly RGBAColor ToRGBAColor() => (RGBAColor)this;
-
     public static Vector3 FromDirectionalAngle(Scalar α, Scalar β, Scalar γ) => new(α.Cos(), β.Cos(), γ.Cos());
 
     public static Vector3 FromDirectionalAngle(Scalar α, Scalar β, Scalar γ, Scalar length) => FromDirectionalAngle(α, β, γ) * length;
