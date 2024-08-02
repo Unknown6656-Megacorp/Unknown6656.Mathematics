@@ -90,12 +90,12 @@ public class DeterministicFiniteAutomaton<S, T>
             List<string> branches = [];
             string res;
 
-            foreach (var e in edges)
+            foreach (Edge<DirectedGraph<S, IEnumerable<T>?>, S, IEnumerable<T>?>? e in edges)
             {
-                var d = e.Data?.ToArray(printer) ?? [];
-                var r_e = d.Length == 1 ? Regex.Escape(d[0])
-                                        : d.All(s => s.Length == 1) ? $"[{string.Concat(d.Select(Regex.Escape))}]"
-                                                                    : $"({string.Join("|", d.Select(Regex.Escape))})";
+                string[] d = e.Data?.ToArray(printer) ?? [];
+                string r_e = d.Length == 1 ? Regex.Escape(d[0])
+                                           : d.All(s => s.Length == 1) ? $"[{string.Concat(d.Select(Regex.Escape))}]"
+                                                                       : $"({string.Join("|", d.Select(Regex.Escape))})";
 
                 if (r_e.Length > 0 && e.To.Equals(vertex))
                     r_e += "*";

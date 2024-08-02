@@ -156,7 +156,7 @@ public class Polynomial<Function, T>
         Type F = typeof(Function);
 
         if (F.GetConstructor([typeof(T[])]) is { } ctor)
-            _create = c => (Function)ctor.Invoke(new object[] { c is T[] a ? a : c.ToArray() });
+            _create = c => (Function)ctor.Invoke([c is T[] a ? a : c.ToArray()]);
         else
             throw new InvalidOperationException($"The type parameter '{F}' cannot be used as polynomial function type, as it has no constructor accepting an array of polynomial coefficents ('{typeof(T[])}').");
 
@@ -282,7 +282,7 @@ public class Polynomial<Function, T>
     {
         0 => new Polynomial<Function, T>(_coefficients),
         > 0 => new Polynomial<Function, T>(Enumerable.Repeat(default(T), count).Concat(_coefficients)),
-        _ => throw new ArgumentOutOfRangeException()
+        _ => throw new ArgumentOutOfRangeException(nameof(count))
     };
 
     public Function DecreaseDegree(int count) => count switch
@@ -445,7 +445,7 @@ public class Polynomial<Function, T>
     /// Implicitly converts the given scalar to a polynomial of degree zero.
     /// </summary>
     /// <param name="f">Scalar</param>
-    public static implicit operator Polynomial<Function, T>(T f) => new(new[] { f });
+    public static implicit operator Polynomial<Function, T>(T f) => new([f]);
 
     /// <summary>
     /// Implicitly converts the given array of scalar coefficients to their respective polynomial representation.

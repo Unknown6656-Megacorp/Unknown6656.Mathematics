@@ -278,9 +278,11 @@ public class LorenzAttractorMap
     private Vector3 _last;
 
     public Func<Vector3, Vector2> TransferFunction { get; }
+#pragma warning disable IDE1006 // Naming Styles
     public Scalar ρ { get; }
     public Scalar σ { get; }
     public Scalar β { get; }
+#pragma warning restore IDE1006
 
 
     public LorenzAttractorMap(Scalar ρ, Scalar σ, Scalar β)

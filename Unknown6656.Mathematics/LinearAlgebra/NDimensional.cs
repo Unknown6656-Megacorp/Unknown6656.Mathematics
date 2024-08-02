@@ -1931,7 +1931,7 @@ public abstract class VectorSpace<Space, Vector, Scalar>
         Type space = typeof(Space);
 
         if (space.GetConstructor([typeof(IEnumerable<Vector>)]) is { } c)
-            _create = v => (Space)c.Invoke(new object[] { v });
+            _create = v => (Space)c.Invoke([v]);
         else
             throw new InvalidOperationException($"The type '{space}' cannot be used as vector space type as it does not provide a constructor accepting a single parameter of the type '{typeof(IEnumerable<Vector>)}'.");
     }

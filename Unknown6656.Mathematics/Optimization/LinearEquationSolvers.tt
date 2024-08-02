@@ -50,7 +50,9 @@ namespace Unknown6656.Mathematics.Optimization.ParticleSwarmOptimization
         /// <summary>
         /// The <#=dim#>-dimensional vector b.
         /// </summary>
+#pragma warning disable IDE1006 // Naming Styles
         public <#=vecname#> b { get; }
+#pragma warning restore IDE1006
 
 
         /// <summary>

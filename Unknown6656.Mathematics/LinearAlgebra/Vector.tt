@@ -602,9 +602,7 @@ public unsafe readonly partial struct <#=typename#>(<#=string.Join(", ", r(0, di
     // TODO : warning
     public readonly int CompareTo(<#=typename#> other) => Length.CompareTo(other.Length);
 
-#pragma warning disable CS8995
-    public readonly int CompareTo(object? other) => CompareTo((<#=typename#>)other);
-#pragma warning restore CS8995
+    public readonly int CompareTo(object? other) => other is <#=typename#> vector ? CompareTo(vector) : -1;
 
     public readonly IEnumerator<Scalar> GetEnumerator()
     {

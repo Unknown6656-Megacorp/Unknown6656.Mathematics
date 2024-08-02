@@ -995,15 +995,15 @@ public unsafe readonly partial struct <#=typename#>
         MatrixNorm.L2_Norm => SpectralNorm,
     };
 
-    public readonly Scalar ComputePNorm(Scalar p) => ToArray().Select(c => c.Abs().Power(p)).Sum().Power(p.MultiplicativeInverse);
+    public readonly Scalar ComputePNorm(Scalar p) => ToArray().Select(c => c.Abs().Power(p)).Sum().Power(p.Inverse);
 
-    public readonly Scalar ComputePQNorm(Scalar p, Scalar q) => Columns.Select(c => c.Select(v => v.Abs().Power(p)).Sum().Power(q / p)).Sum().Power(q.MultiplicativeInverse);
+    public readonly Scalar ComputePQNorm(Scalar p, Scalar q) => Columns.Select(c => c.Select(v => v.Abs().Power(p)).Sum().Power(q / p)).Sum().Power(q.Inverse);
 
-    public readonly Scalar ComputeMatrixCondition(MatrixNorm norm) => ComputeNorm(norm) * MultiplicativeInverse.ComputeNorm(norm);
+    public readonly Scalar ComputeMatrixCondition(MatrixNorm norm) => ComputeNorm(norm) * Inverse.ComputeNorm(norm);
 
-    public readonly Scalar ComputePMatrixCondition(Scalar p) => ComputePNorm(p) * MultiplicativeInverse.ComputePNorm(p);
+    public readonly Scalar ComputePMatrixCondition(Scalar p) => ComputePNorm(p) * Inverse.ComputePNorm(p);
 
-    public readonly Scalar ComputePQMatrixCondition(Scalar p, Scalar q) => ComputePQNorm(p, q) * MultiplicativeInverse.ComputePQNorm(p, q);
+    public readonly Scalar ComputePQMatrixCondition(Scalar p, Scalar q) => ComputePQNorm(p, q) * Inverse.ComputePQNorm(p, q);
 
     public readonly <#=typename#> ComponentwiseDivide(in <#=typename#> second) => new(<#=string.Join(", ", r(0, dim).Select(i => $"_c{i}.ComponentwiseDivide(second._c{i})"))#>);
 
@@ -1311,7 +1311,7 @@ public unsafe readonly partial struct <#=typename#>
         <#=typename#> P = new <#=typename#>(<#=string.Join(", ", r(0, dim).Select(i => $"pairs[{i}].v"))#>);
         <#=typename#> S = new <#=typename#>(<#=string.Join(", ", r(0, dim).Select(i => $"pairs[{i}].λ"))#>);
 
-        return (P, S, P.MultiplicativeInverse);
+        return (P, S, P.Inverse);
     }
 
     /// <summary>

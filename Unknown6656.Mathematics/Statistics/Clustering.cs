@@ -67,12 +67,10 @@ public record ClusteringConfiguration<Item>(int InputDimensionality, Func<Item, 
 /// Represents an abstract clustering algorithm, which clusters a given dataset based on a specified distance metric.
 /// </summary>
 /// <completionlist cref="Clustering"/>
-public abstract class Clustering<Item>
+public abstract class Clustering<Item>(ClusteringConfiguration<Item> config)
 {
-    public ClusteringConfiguration<Item> Configuration { get; }
+    public ClusteringConfiguration<Item> Configuration { get; } = config;
 
-
-    public Clustering(ClusteringConfiguration<Item> config) => Configuration = config;
 
     public IEnumerable<Cluster<Item>> Process(IEnumerable<Item>? collection)
     {
@@ -121,7 +119,7 @@ public class KMeansClustering<Item>
     {
         int count = data.GetLength(0);
         int dim = data.GetLength(1);
-        double[,] normalized = Normalized(data, dim);
+        double[,] normalized = Normalize(data, dim);
         int[] clustering = new int[count];
         double[,] means = new double[K, dim];
         XorShift random = new();
@@ -141,7 +139,7 @@ public class KMeansClustering<Item>
         return clustering;
     }
 
-    private double[,] Normalized(double[,] rawData, int dim)
+    private static double[,] Normalize(double[,] rawData, int dim)
     {
         int count = rawData.GetLength(0);
         double[,] result = new double[count, dim];

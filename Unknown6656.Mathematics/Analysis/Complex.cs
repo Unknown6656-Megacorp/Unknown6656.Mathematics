@@ -164,7 +164,7 @@ public unsafe readonly struct Complex
 
     public readonly int Dimension => 2;
 
-    public readonly Scalar[] Coefficients => new[] { _re, _im };
+    public readonly Scalar[] Coefficients => [_re, _im];
 
     public readonly Scalar CoefficientSum => _re + _im;
 
@@ -277,7 +277,7 @@ public unsafe readonly struct Complex
 
     public readonly Scalar DistanceTo(in Complex second) => second.Subtract(this).Length;
 
-    public readonly Scalar[] ToArray() => new[] { _re, _im };
+    public readonly Scalar[] ToArray() => [_re, _im];
 
     public readonly Vector2 ToVector() => new(_re, _im);
 

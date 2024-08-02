@@ -220,7 +220,7 @@ public static unsafe class FourierTransform
     private static int[] GetReversedBits(int bits)
     {
         if ((bits < MIN_BITS) || (bits > MAX_BITS))
-            throw new ArgumentOutOfRangeException();
+            throw new ArgumentOutOfRangeException(nameof(bits));
 
         if (_rev[bits - 1] == null)
         {

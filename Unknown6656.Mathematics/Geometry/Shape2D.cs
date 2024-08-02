@@ -583,7 +583,7 @@ public sealed class Triangle2D
     public Line2D SideB => CornerC.To(CornerA);
     public Line2D SideC => CornerA.To(CornerB);
 
-    public override Vector2[] Corners => new[] { CornerA, CornerB, CornerC };
+    public override Vector2[] Corners => [CornerA, CornerB, CornerC];
 
     public Line2D MedianA => CornerA.To(SideA.CenterPoint);
     public Line2D MedianB => CornerB.To(SideB.CenterPoint);
@@ -727,7 +727,7 @@ public class Parallelogram2D
     : Polygon2D<Parallelogram2D>
 {
     private readonly Vector2 _bl_corner;
-    internal readonly Vector2 _right_dir;
+    private readonly Vector2 _right_dir;
     private readonly Vector2 _up_dir;
 
     public Vector2 BottomLeft => _bl_corner;
@@ -735,8 +735,8 @@ public class Parallelogram2D
     public Vector2 TopRight => _bl_corner + _right_dir + _up_dir;
     public Vector2 TopLeft => _bl_corner + _up_dir;
 
-    public override Vector2[] Corners => new[] { BottomLeft, BottomRight, TopRight, TopLeft };
-    public override Line2D[] Sides => new[] { BottomSide, RightSide, TopSide, LeftSide };
+    public override Vector2[] Corners => [BottomLeft, BottomRight, TopRight, TopLeft];
+    public override Line2D[] Sides => [BottomSide, RightSide, TopSide, LeftSide];
 
     public override Vector2 CenterPoint => _bl_corner + .5 * (_right_dir + _up_dir);
 
