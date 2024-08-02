@@ -68,20 +68,24 @@ public abstract class BinaryCipher
 
     public virtual unsafe byte[] Encrypt<T>(byte[] key, T message)
     {
+#pragma warning disable CS8500 // This takes the address of, gets the size of, or declares a pointer to a managed type
         byte[] plain = new byte[sizeof(T)];
 
         fixed (byte* ptr = plain)
             *(T*)ptr = message;
 
         return Encrypt(key, message);
+#pragma warning restore CS8500
     }
 
     public virtual unsafe T Decrypt<T>(byte[] key, byte[] cipher)
     {
+#pragma warning disable CS8500 // This takes the address of, gets the size of, or declares a pointer to a managed type
         byte[] plain = Decrypt(key, cipher);
 
         fixed (byte* ptr = plain)
             return *(T*)ptr;
+#pragma warning restore CS8500
     }
 
     public virtual byte[] Encrypt<T>(string key, T message) => Encrypt(key, message, DefaultEncoding);

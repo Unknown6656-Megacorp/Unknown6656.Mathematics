@@ -112,7 +112,7 @@ public class Function<Domain, Codomain>
     {
         Func<Domain, Codomain?> other = second._func;
 
-        return new(x => _func(x) + other(x));
+        return new(x => _func(x).Add(other(x)));
     }
 
     public Function<Domain, Codomain> Add(Codomain constant) => Add(new Function<Domain, Codomain>(constant));

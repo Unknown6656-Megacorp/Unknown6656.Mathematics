@@ -607,11 +607,11 @@ public sealed class Triangle2D
     public override Scalar SurfaceArea => .5 * AltitudeA.Length * SideA.Length;
 
     /// <inheritdoc/>
-    public override Vector2 CenterPoint => MedianA.GetLenientIntersection(MedianB).Value; // TODO
+    public override Vector2 CenterPoint => MedianA.GetLenientIntersection(MedianB) ?? throw new InvalidOperationException("The triangle has no computable center point.");
 
     public Vector2 Centroid => CenterPoint;
 
-    public Vector2 OrthoCenter => AltitudeA.GetLenientIntersection(AltitudeB).Value; // TODO
+    public Vector2 OrthoCenter => AltitudeA.GetLenientIntersection(AltitudeB) ?? throw new InvalidOperationException("The triangle has no computable ortho-center point.");
 
     public Vector2 CircumCenter => throw new NotImplementedException(); // TODO
 
@@ -726,9 +726,9 @@ public class Quadrilateral2D
 public class Parallelogram2D
     : Polygon2D<Parallelogram2D>
 {
-    private readonly Vector2 _bl_corner;
-    private readonly Vector2 _right_dir;
-    private readonly Vector2 _up_dir;
+    internal readonly Vector2 _bl_corner;
+    internal readonly Vector2 _right_dir;
+    internal readonly Vector2 _up_dir;
 
     public Vector2 BottomLeft => _bl_corner;
     public Vector2 BottomRight => _bl_corner + _right_dir;

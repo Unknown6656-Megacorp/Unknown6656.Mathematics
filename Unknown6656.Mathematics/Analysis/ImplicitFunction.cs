@@ -19,16 +19,16 @@ public abstract class GeneralizedImplicitFunction<Domain>
 
     public abstract bool Evaluate(Domain value, Scalar tolerance);
 
-    public GeneralizedImplicitFunction<Domain> Negate() => new Delegated((x, ε) => !Evaluate(x, ε));
+    public virtual GeneralizedImplicitFunction<Domain> Negate() => new Delegated((x, ε) => !Evaluate(x, ε));
 
-    public GeneralizedImplicitFunction<Domain> Except(GeneralizedImplicitFunction<Domain> second) => new Delegated((x, ε) => Evaluate(x, ε) && !second.Evaluate(x, ε));
+    public virtual GeneralizedImplicitFunction<Domain> Except(GeneralizedImplicitFunction<Domain> second) => new Delegated((x, ε) => Evaluate(x, ε) && !second.Evaluate(x, ε));
 
-    public GeneralizedImplicitFunction<Domain> SymmetricDifference(GeneralizedImplicitFunction<Domain> second) => new Delegated((x, ε) => Evaluate(x, ε) ^ second.Evaluate(x, ε));
+    public virtual GeneralizedImplicitFunction<Domain> SymmetricDifference(GeneralizedImplicitFunction<Domain> second) => new Delegated((x, ε) => Evaluate(x, ε) ^ second.Evaluate(x, ε));
 
-    public GeneralizedImplicitFunction<Domain> Union(params GeneralizedImplicitFunction<Domain>[] others) => new Delegated((x, ε) =>
+    public virtual GeneralizedImplicitFunction<Domain> Union(params GeneralizedImplicitFunction<Domain>[] others) => new Delegated((x, ε) =>
         others.Aggregate(Evaluate(x, ε), (r, f) => r || f.Evaluate(x, ε)));
 
-    public GeneralizedImplicitFunction<Domain> Intersect(params GeneralizedImplicitFunction<Domain>[] others) => new Delegated((x, ε) =>
+    public virtual GeneralizedImplicitFunction<Domain> Intersect(params GeneralizedImplicitFunction<Domain>[] others) => new Delegated((x, ε) =>
         others.Aggregate(Evaluate(x, ε), (r, f) => r && f.Evaluate(x, ε)));
 
     public static GeneralizedImplicitFunction<Domain> operator !(GeneralizedImplicitFunction<Domain> function) => function.Negate();

@@ -127,7 +127,7 @@ public partial class <#=typename#>
         );
     }
 
-    public <#=typename#> Negate() => new(v => ExplicitFunction.Evaluate(-v), ComparisonOperator);
+    public override <#=typename#> Negate() => new(v => ExplicitFunction.Evaluate(-v), ComparisonOperator);
 
     public <#=typename#> Shift(<#=vecname#> offset) => new(v => ExplicitFunction.Evaluate(v - offset), ComparisonOperator);
 
