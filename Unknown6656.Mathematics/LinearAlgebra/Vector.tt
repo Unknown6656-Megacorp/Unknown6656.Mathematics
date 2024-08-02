@@ -1000,15 +1000,15 @@ public unsafe readonly partial struct <#=typename#>(<#=string.Join(", ", r(0, di
 
     public static <#=typename#> operator %(in <#=typename#> v1, in <#=typename#> v2) => v1.ComponentwiseModulus(in v2);
 
-    public static implicit operator num.Vector<Scalar>(<#=typename#> v) => new(v.Coefficients.Cast<Scalar>().ToArray());
+    public static implicit operator num.Vector<Scalar>(<#=typename#> v) => new([<#=string.Join(", ", r(0, dim).Select(i => $"v[{i}]"))#>]);
 
-    public static implicit operator num.Vector<double>(<#=typename#> v) => new(v.Coefficients.Cast<double>().ToArray());
+    public static implicit operator num.Vector<double>(<#=typename#> v) => new([<#=string.Join(", ", r(0, dim).Select(i => $"(double)v[{i}]"))#>]);
 
-    public static implicit operator num.Vector<float>(<#=typename#> v) => new(v.Coefficients.Cast<float>().ToArray());
+    public static implicit operator num.Vector<float>(<#=typename#> v) => new([<#=string.Join(", ", r(0, dim).Select(i => $"(float)v[{i}]"))#>]);
 
-    public static implicit operator num.Vector<long>(<#=typename#> v) => new(v.Coefficients.Cast<long>().ToArray());
+    public static implicit operator num.Vector<long>(<#=typename#> v) => new([<#=string.Join(", ", r(0, dim).Select(i => $"(long)(__scalar)v[{i}]"))#>]);
 
-    public static implicit operator num.Vector<int>(<#=typename#> v) => new(v.Coefficients.Cast<int>().ToArray());
+    public static implicit operator num.Vector<int>(<#=typename#> v) => new([<#=string.Join(", ", r(0, dim).Select(i => $"(int)(__scalar)v[{i}]"))#>]);
 
     public static implicit operator <#=typename#>(num.Vector<Scalar> v) => new(<#=string.Join(", ", r(0, dim).Select(i => $"v[{i}]"))#>);
 
