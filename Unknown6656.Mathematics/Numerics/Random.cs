@@ -11,6 +11,8 @@ using netrandom = System.Random;
 
 namespace Unknown6656.Mathematics.Numerics;
 
+// This could hugely benefit from the 'Shapes and Extensions' feature.
+
 
 public abstract class Random
     : netrandom

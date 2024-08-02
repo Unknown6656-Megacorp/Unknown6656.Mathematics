@@ -19,6 +19,10 @@ using Unknown6656.Common;
 namespace Unknown6656.Mathematics.LinearAlgebra;
 
 
+/// <summary>
+/// Represents a scalar value (a single number) in mathematics.
+/// This struct internally wraps the datatype <see cref="__scalar"/>.
+/// </summary>
 [StructLayout(LayoutKind.Sequential, Size = sizeof(__scalar), Pack = sizeof(__scalar)), NativeCppClass, Serializable, CLSCompliant(false)]
 public unsafe readonly partial struct Scalar
     : IScalar<Scalar>
@@ -26,6 +30,7 @@ public unsafe readonly partial struct Scalar
     , Algebra<Scalar>.IVector<Scalar, Scalar>
     , Algebra<Scalar, Polynomial>.IComposite1D
     , Algebra<Scalar, Polynomial>.IMatrix<Scalar, MatrixNM>
+    , num.IFloatingPointIeee754<Scalar>
     , IComparable<Scalar>
     , IEquatable<Scalar>
     , IComparable
@@ -56,23 +61,27 @@ public unsafe readonly partial struct Scalar
     #region STATIC PROPERTIES
 
 #pragma warning disable IDE1006
-    public static Scalar e { get; } = __scalar.E;
+    public static Scalar π { get; } = new(__scalar.Pi);
 
-    public static Scalar π { get; } = __scalar.Pi;
+    public static Scalar τ { get; } = new(__scalar.Tau);
 
-    public static Scalar τ { get; } = __scalar.Tau;
+    public static Scalar e { get; } = new(__scalar.E);
 #pragma warning restore IDE1006
-    public static Scalar Pi { get; } = π;
+    static Scalar num.IFloatingPointConstants<Scalar>.E => e;
 
-    public static Scalar Tau { get; } = τ;
+    public static Scalar Pi => π;
 
-    public static Scalar PiHalf { get; } = π * .5;
+    public static Scalar Tau => τ;
 
-    public static Scalar Sqrt2 { get; } = __scalar.Sqrt(2);
+    public static Scalar PiHalf => π * .5;
+
+    public static Scalar Sqrt2 { get; } = new(__scalar.Sqrt(2));
 
     public static Scalar GoldenRatio { get; } = 1.618033988749894848204586834;
 
-    public static Scalar IEEE754Epsilon { get; } = __scalar.Epsilon;
+    public static Scalar IEEE754Epsilon { get; } = new(__scalar.Epsilon);
+
+    static Scalar num.IFloatingPointIeee754<Scalar>.Epsilon => IEEE754Epsilon;
 
     public static Scalar ComputationalEpsilon
     {
@@ -84,34 +93,42 @@ public unsafe readonly partial struct Scalar
         }
     }
 
-    public static Scalar MinValue { get; } = __scalar.MinValue;
+    public static Scalar MinValue { get; } = new(__scalar.MinValue);
 
-    public static Scalar MaxValue { get; } = __scalar.MaxValue;
+    public static Scalar MaxValue { get; } = new(__scalar.MaxValue);
 
-    public static Scalar NegativeInfinity { get; } = __scalar.NegativeInfinity;
+    public static Scalar NegativeInfinity { get; } = new(__scalar.NegativeInfinity);
 
-    public static Scalar PositiveInfinity { get; } = __scalar.PositiveInfinity;
+    public static Scalar PositiveInfinity { get; } = new(__scalar.PositiveInfinity);
 
-    public static Scalar NaN { get; } = __scalar.NaN;
+    public static Scalar NegativeZero { get; } = new(__scalar.NegativeZero);
+
+    public static Scalar NaN { get; } = new(__scalar.NaN);
 
     /// <summary>
     /// The 1x1 zero matrix. This is euqal to the scalar value of 0.
     /// </summary>
-    public static Scalar Zero { get; } = new Scalar(0d);
+    public static Scalar Zero { get; } = new Scalar((__scalar)0);
 
     /// <summary>
     /// The 1x1 identity (unit) matrix. This is euqal to the scalar value of 1.
     /// </summary>
-    public static Scalar One { get; } = new Scalar(1d);
+    public static Scalar One { get; } = new Scalar((__scalar)1);
 
-    public static Scalar NegativeOne { get; } = new Scalar(-1d);
+    public static Scalar NegativeOne { get; } = new Scalar((__scalar)(-1));
 
-    public static Scalar Two { get; } = new Scalar(2d);
+    public static Scalar Two { get; } = new Scalar((__scalar)2);
 
     /// <summary>
     /// The raw memory size of the <see cref="Scalar"/>-structure in bytes.
     /// </summary>
     public static int BinarySize { get; } = sizeof(Scalar);
+
+    static int num.INumberBase<Scalar>.Radix => 2;
+
+    static Scalar num.IAdditiveIdentity<Scalar, Scalar>.AdditiveIdentity => Zero;
+
+    static Scalar num.IMultiplicativeIdentity<Scalar, Scalar>.MultiplicativeIdentity => One;
 
     public static ScalarEqualityComparer EqualityComparer { get; } = new ScalarEqualityComparer();
 
@@ -200,7 +217,7 @@ public unsafe readonly partial struct Scalar
     public readonly Scalar Phi => PrimeFactors is { Length: 2 } f ? (__scalar)((f[0] - 1) * (f[1] - 1)) : throw new InvalidOperationException($"φ({this}) is not defined.");
 
     #endregion
-    #region EXPLICIT PROPERTIES
+    #region EXPLICIT INSTANCE PROPERTIES
 
     readonly Scalar Algebra<Scalar>.IMetricVectorSpace<Scalar>.SquaredNorm => Multiply(this);
 
@@ -210,7 +227,7 @@ public unsafe readonly partial struct Scalar
 
     readonly Scalar Algebra<Scalar>.IMetricVectorSpace.Length => Abs();
 
-    readonly Scalar[] Algebra<Scalar>.IComposite1D.Coefficients => new[] { this };
+    readonly Scalar[] Algebra<Scalar>.IComposite1D.Coefficients => [this];
 
     readonly Scalar[,] Algebra<Scalar>.IComposite2D.Coefficients => new[,] { { this } };
 
@@ -266,15 +283,15 @@ public unsafe readonly partial struct Scalar
 
     readonly Scalar[] Algebra<Scalar>.IMatrix.Eigenvalues => IsZero ? [] : [this];
 
-    readonly IEnumerable<Scalar> Algebra<Scalar>.IComposite2D.FlattenedCoefficients => new[] { this };
+    readonly IEnumerable<Scalar> Algebra<Scalar>.IComposite2D.FlattenedCoefficients => [this];
 
     readonly (int Columns, int Rows) Algebra<Scalar>.IComposite2D.Dimensions => (1, 1);
 
     readonly Scalar Algebra<Scalar>.IMatrix<Scalar, Scalar>.MainDiagonal => this;
 
-    readonly Scalar[] Algebra<Scalar>.IMatrix<Scalar, Scalar>.Columns => new[] { this };
+    readonly Scalar[] Algebra<Scalar>.IMatrix<Scalar, Scalar>.Columns => [this];
 
-    readonly Scalar[] Algebra<Scalar>.IMatrix<Scalar, Scalar>.Rows => new[] { this };
+    readonly Scalar[] Algebra<Scalar>.IMatrix<Scalar, Scalar>.Rows => [this];
 
     readonly int Algebra<Scalar>.IMatrix.Rank => IsZero ? 0 : 1;
 
@@ -393,11 +410,23 @@ public unsafe readonly partial struct Scalar
 
     public readonly Scalar Cbrt() => new(__scalar.Cbrt(Determinant));
 
+    public readonly Scalar ScaleB(int n) => new(__scalar.ScaleB(Determinant, n));
+
     public readonly Scalar RootN(int n) => new(__scalar.RootN(Determinant, n));
 
     public readonly Scalar Exp() => new(__scalar.Exp(Determinant));
 
+    public readonly Scalar Exp2() => new(__scalar.Exp2(Determinant));
+
+    public readonly Scalar Exp10() => new(__scalar.Exp10(Determinant));
+
+    public readonly int ILogB() => __scalar.ILogB(Determinant);
+
     public readonly Scalar Log() => new(__scalar.Log(Determinant));
+
+    public readonly Scalar Log2() => new(__scalar.Log2(Determinant));
+
+    public readonly Scalar Log10() => new(__scalar.Log10(Determinant));
 
     public readonly Scalar Sinc() => Sin(Multiply(Pi)).Divide(Tau);
 
@@ -450,6 +479,34 @@ public unsafe readonly partial struct Scalar
     public readonly Scalar Asech() => MultiplicativeInverse.Acosh();
 
     public readonly Scalar Acsch() => MultiplicativeInverse.Asinh();
+
+    public readonly Scalar AcosPi() => new(__scalar.AcosPi(Determinant));
+
+    public readonly Scalar AsinPi() => new(__scalar.AsinPi(Determinant));
+
+    public readonly Scalar AtanPi() => new(__scalar.AtanPi(Determinant));
+
+    public readonly Scalar CosPi() => new(__scalar.CosPi(Determinant));
+
+    public readonly Scalar SinPi() => new(__scalar.SinPi(Determinant));
+
+    public readonly Scalar TanPi() => new(__scalar.TanPi(Determinant));
+
+    public readonly Scalar BitDecrement() => new(__scalar.BitDecrement(Determinant));
+
+    public readonly Scalar BitIncrement() => new(__scalar.BitIncrement(Determinant));
+
+    public readonly (Scalar Sin, Scalar Cos) SinCos() => (Sin(), Cos());
+
+    public readonly (Scalar SinPi, Scalar CosPi) SinCosPi() => (SinPi(), CosPi());
+
+    public readonly Scalar Round() => Round(0);
+
+    public readonly Scalar Round(int digits) => Round(digits, default);
+
+    public readonly Scalar Round(MidpointRounding mode) => Round(0, mode);
+
+    public readonly Scalar Round(int digits, MidpointRounding mode) => new(__scalar.Round(Determinant, digits, mode));
 
     public readonly Scalar Clamp() => Clamp(Zero, One);
 
@@ -508,6 +565,8 @@ public unsafe readonly partial struct Scalar
 
     /// <inheritdoc cref="__scalar.ToString(string,IFormatProvider)"/>
     public readonly string ToString(string? format, IFormatProvider? prov) => Determinant.ToString(format, prov);
+
+    bool ISpanFormattable.TryFormat(Span<char> destination, out int charsWritten, ReadOnlySpan<char> format, IFormatProvider? provider) => Determinant.TryFormat(destination, out charsWritten, format, provider);
 
     public readonly string ToHexString(int digits = 18) => ToString(16, digits);
 
@@ -613,7 +672,7 @@ public unsafe readonly partial struct Scalar
     public readonly (Scalar U, Scalar D) IwasawaDecompose() => (this, One);
 
     #endregion
-    #region EXPLICIT METHODS
+    #region EXPLICIT INSTANCE METHODS
 
     readonly Scalar Algebra<Scalar>.IVector<Scalar, Scalar>.OuterProduct(in Scalar second) => Multiply(in second);
 
@@ -707,6 +766,22 @@ public unsafe readonly partial struct Scalar
     readonly Scalar Algebra<Scalar>.IMatrix<Scalar, Scalar>.AddColumns(int src_col, int dst_col, Scalar factor) =>
         (src_col, dst_col) == (0, 0) ? Determinant * (1 + factor) : throw new ArgumentException("The source and destination columns must have the index zero.");
 
+    readonly int num.IFloatingPoint<Scalar>.GetExponentByteCount() => ((num.IFloatingPoint<__scalar>)Determinant).GetExponentByteCount();
+
+    readonly int num.IFloatingPoint<Scalar>.GetExponentShortestBitLength() => ((num.IFloatingPoint<__scalar>)Determinant).GetExponentShortestBitLength();
+
+    readonly int num.IFloatingPoint<Scalar>.GetSignificandBitLength() => ((num.IFloatingPoint<__scalar>)Determinant).GetSignificandBitLength();
+
+    readonly int num.IFloatingPoint<Scalar>.GetSignificandByteCount() => ((num.IFloatingPoint<__scalar>)Determinant).GetSignificandByteCount();
+
+    readonly bool num.IFloatingPoint<Scalar>.TryWriteExponentBigEndian(Span<byte> destination, out int bytesWritten) => ((num.IFloatingPoint<__scalar>)Determinant).TryWriteExponentBigEndian(destination, out bytesWritten);
+
+    readonly bool num.IFloatingPoint<Scalar>.TryWriteExponentLittleEndian(Span<byte> destination, out int bytesWritten) => ((num.IFloatingPoint<__scalar>)Determinant).TryWriteExponentLittleEndian(destination, out bytesWritten);
+
+    readonly bool num.IFloatingPoint<Scalar>.TryWriteSignificandBigEndian(Span<byte> destination, out int bytesWritten) => ((num.IFloatingPoint<__scalar>)Determinant).TryWriteSignificandBigEndian(destination, out bytesWritten);
+
+    readonly bool num.IFloatingPoint<Scalar>.TryWriteSignificandLittleEndian(Span<byte> destination, out int bytesWritten) => ((num.IFloatingPoint<__scalar>)Determinant).TryWriteSignificandLittleEndian(destination, out bytesWritten);
+
     #endregion
     #region STATIC METHODS
 
@@ -731,6 +806,22 @@ public unsafe readonly partial struct Scalar
     public static Scalar RootN(Scalar s, int n) => s.RootN(n);
 
     public static Scalar Exp(Scalar s) => s.Exp();
+
+    public static int ILogB(Scalar x) => x.ILogB();
+
+    public static Scalar ScaleB(Scalar x, int n) => x.ScaleB(n);
+
+    public static Scalar Exp10(Scalar x) => x.Exp10();
+
+    public static Scalar Exp2(Scalar x) => x.Exp2();
+
+    public static Scalar Log10(Scalar x) => x.Log10();
+
+    public static Scalar Log2(Scalar x) => x.Log2();
+
+    public static Scalar Hypot(Scalar x, Scalar y) => Sqrt(x * x + y * y);
+
+    public static Scalar Power(Scalar x, Scalar y) => x.Power(y);
 
     public static Scalar Log(Scalar s) => s.Log();
 
@@ -790,6 +881,52 @@ public unsafe readonly partial struct Scalar
 
     public static Scalar Asech(Scalar s) => s.Asech();
 
+    public static Scalar Atan2Pi(Scalar y, Scalar x) => __scalar.Atan2Pi(y.Determinant, x.Determinant);
+
+    public static Scalar AcosPi(Scalar x) => x.AcosPi();
+
+    public static Scalar AsinPi(Scalar x) => x.AsinPi();
+
+    public static Scalar AtanPi(Scalar x) => x.AtanPi();
+
+    public static Scalar CosPi(Scalar x) => x.CosPi();
+
+    public static (Scalar Sin, Scalar Cos) SinCos(Scalar x) => x.SinCos();
+
+    public static (Scalar SinPi, Scalar CosPi) SinCosPi(Scalar x) => x.SinCosPi();
+
+    public static Scalar SinPi(Scalar x) => x.SinPi();
+
+    public static Scalar TanPi(Scalar x) => x.TanPi();
+
+    public static Scalar Round(Scalar x) => x.Round();
+
+    public static Scalar Round(Scalar x, int digits) => x.Round(digits);
+
+    public static Scalar Round(Scalar x, MidpointRounding mode) => x.Round(mode);
+
+    public static Scalar Round(Scalar x, int digits, MidpointRounding mode) => x.Round(digits, mode);
+
+    public static Scalar Max(Scalar x, Scalar y) => x.Max(y);
+
+    public static Scalar Min(Scalar x, Scalar y) => x.Min(y);
+
+    public static Scalar MaxMagnitude(Scalar x, Scalar y) => new(__scalar.MaxMagnitude(x.Determinant, y.Determinant));
+
+    public static Scalar MaxMagnitudeNumber(Scalar x, Scalar y) => new(__scalar.MaxMagnitudeNumber(x.Determinant, y.Determinant));
+
+    public static Scalar MinMagnitude(Scalar x, Scalar y) => new(__scalar.MinMagnitude(x.Determinant, y.Determinant));
+
+    public static Scalar MinMagnitudeNumber(Scalar x, Scalar y) => new(__scalar.MinMagnitudeNumber(x.Determinant, y.Determinant));
+
+    public static Scalar BitDecrement(Scalar x) => x.BitDecrement();
+
+    public static Scalar BitIncrement(Scalar x) => x.BitIncrement();
+
+    public static Scalar FusedMultiplyAdd(Scalar left, Scalar right, Scalar addend) => __scalar.FusedMultiplyAdd(left.Determinant, right.Determinant, addend.Determinant);
+
+    public static Scalar Ieee754Remainder(Scalar left, Scalar right) => __scalar.Ieee754Remainder(left.Determinant, right.Determinant);
+
     public static Scalar Add(Scalar s1, Scalar s2) => s1.Add(s2);
 
     public static Scalar Subtract(Scalar s1, Scalar s2) => s1.Subtract(s2);
@@ -800,14 +937,20 @@ public unsafe readonly partial struct Scalar
 
     public static Scalar Modulus(Scalar s1, Scalar s2) => s1.Modulus(s2);
 
-    public static bool TryParse(string str, out Scalar scalar)
+    public static bool TryParse(string? str, NumberStyles style, IFormatProvider? provider, out Scalar scalar)
     {
-        bool success = true;
-
-        str = str.Remove("_").ToLowerInvariant().Trim();
+        str = str?.Remove("_")?.ToLowerInvariant()?.Trim() ?? "0";
         scalar = Zero;
 
-        if (str.Match(REGEX_BIN, out ReadOnlyIndexer<string, string>? groups))
+        bool success = __scalar.TryParse(str, style, provider, out __scalar result);
+
+        if (success)
+        {
+            scalar = new(result);
+
+            return true;
+        }
+        else if (str.Match(REGEX_BIN, out ReadOnlyIndexer<string, string>? groups))
             scalar = Convert.ToUInt64(groups["num"].Remove("0b").Remove("b"), 2);
         else if (str.Match(REGEX_OCT, out groups))
             scalar = Convert.ToUInt64(groups["num"].Remove("0o").Remove("o"), 8);
@@ -843,16 +986,77 @@ public unsafe readonly partial struct Scalar
         return success;
     }
 
+    public static bool TryParse(string? s, IFormatProvider? provider, out Scalar result) => TryParse(s, NumberStyles.Float, provider, out result);
+
+    public static bool TryParse(string? s, out Scalar result) => TryParse(s, null, out result);
+
+    public static bool TryParse(ReadOnlySpan<char> s, NumberStyles style, IFormatProvider? provider, out Scalar result) => TryParse(new string(s), style, provider, out result);
+
+    public static bool TryParse(ReadOnlySpan<char> s, IFormatProvider? provider, out Scalar result) => TryParse(s, NumberStyles.Float, provider, out result);
+
+    public static bool TryParse(ReadOnlySpan<char> s, out Scalar result) => TryParse(s, null, out result);
+
+    public static Scalar Parse(string s, NumberStyles style, IFormatProvider? provider) => TryParse(s, style, provider, out Scalar value) ? value : throw new FormatException();
+
+    public static Scalar Parse(ReadOnlySpan<char> s, NumberStyles style, IFormatProvider? provider) => TryParse(s, style, provider, out Scalar value) ? value : throw new FormatException();
+
+    public static Scalar Parse(ReadOnlySpan<char> s, IFormatProvider? provider) => TryParse(s, provider, out Scalar value) ? value : throw new FormatException();
+
+    public static Scalar Parse(ReadOnlySpan<char> s) => TryParse(s, out Scalar value) ? value : throw new FormatException();
+
+    public static Scalar Parse(string s, IFormatProvider? provider) => TryParse(s, provider, out Scalar value) ? value : throw new FormatException();
+
+    public static Scalar Parse(string s) => TryParse(s, out Scalar value) ? value : throw new FormatException();
+
     public static Scalar FromArray(params Scalar[] array) => array[0];
 
-    public static Scalar FromArray<T>(params T[] array)
-        where T : unmanaged
-    {
-        fixed (T* ptr = array)
-            return FromNative(ptr);
-    }
+    static Scalar num.IPowerFunctions<Scalar>.Pow(Scalar x, Scalar y) => Power(x, y);
 
-    public static Scalar FromNative<T>(T* pointer) where T : unmanaged => *(Scalar*)pointer;
+    static bool num.INumberBase<Scalar>.IsCanonical(Scalar value) => true;
+
+    static bool num.INumberBase<Scalar>.IsComplexNumber(Scalar value) => false;
+
+    static bool num.INumberBase<Scalar>.IsEvenInteger(Scalar value) => __scalar.IsEvenInteger(value.Determinant);
+
+    static bool num.INumberBase<Scalar>.IsFinite(Scalar value) => value.IsFinite;
+
+    static bool num.INumberBase<Scalar>.IsImaginaryNumber(Scalar value) => false;
+
+    static bool num.INumberBase<Scalar>.IsInfinity(Scalar value) => value.IsInfinity;
+
+    static bool num.INumberBase<Scalar>.IsInteger(Scalar value) => value.IsInteger;
+
+    static bool num.INumberBase<Scalar>.IsNaN(Scalar value) => value.IsNaN;
+
+    static bool num.INumberBase<Scalar>.IsNegative(Scalar value) => value.IsNegative;
+
+    static bool num.INumberBase<Scalar>.IsNegativeInfinity(Scalar value) => value.IsNegativeInfinity;
+
+    static bool num.INumberBase<Scalar>.IsNormal(Scalar value) => __scalar.IsNormal(value.Determinant);
+
+    static bool num.INumberBase<Scalar>.IsOddInteger(Scalar value) => __scalar.IsOddInteger(value.Determinant);
+
+    static bool num.INumberBase<Scalar>.IsPositive(Scalar value) => value.IsPositive;
+
+    static bool num.INumberBase<Scalar>.IsPositiveInfinity(Scalar value) => value.IsPositiveInfinity;
+
+    static bool num.INumberBase<Scalar>.IsRealNumber(Scalar value) => __scalar.IsRealNumber(value.Determinant);
+
+    static bool num.INumberBase<Scalar>.IsSubnormal(Scalar value) => __scalar.IsSubnormal(value.Determinant);
+
+    static bool num.INumberBase<Scalar>.IsZero(Scalar value) => value.IsZero;
+
+
+
+
+
+    static bool num.INumberBase<Scalar>.TryConvertFromChecked<TOther>(TOther value, out Scalar result) => throw new NotImplementedException();
+    static bool num.INumberBase<Scalar>.TryConvertFromSaturating<TOther>(TOther value, out Scalar result) => throw new NotImplementedException();
+    static bool num.INumberBase<Scalar>.TryConvertFromTruncating<TOther>(TOther value, out Scalar result) => throw new NotImplementedException();
+    static bool num.INumberBase<Scalar>.TryConvertToChecked<TOther>(Scalar value, out TOther result) => throw new NotImplementedException();
+    static bool num.INumberBase<Scalar>.TryConvertToSaturating<TOther>(Scalar value, out TOther result) => throw new NotImplementedException();
+    static bool num.INumberBase<Scalar>.TryConvertToTruncating<TOther>(Scalar value, out TOther result) => throw new NotImplementedException();
+
 
     #endregion
     #region OPERATORS
@@ -909,7 +1113,11 @@ public unsafe readonly partial struct Scalar
     /// <returns>Comparison result</returns>
     public static bool operator >=(Scalar m1, Scalar m2) => m1.CompareTo(m2) >= 0;
 
+    public static Scalar operator ++(Scalar s) => s.Increment();
+
     public static Scalar operator ++(in Scalar s) => s.Increment();
+
+    public static Scalar operator --(Scalar s) => s.Decrement();
 
     public static Scalar operator --(in Scalar s) => s.Decrement();
 
@@ -918,7 +1126,21 @@ public unsafe readonly partial struct Scalar
     /// </summary>
     /// <param name="m">Original scalar</param>
     /// <returns>Unchanged scalar</returns>
+    public static Scalar operator +(Scalar m) => m;
+
+    /// <summary>
+    /// Identity function (returns the given scalar unchanged)
+    /// </summary>
+    /// <param name="m">Original scalar</param>
+    /// <returns>Unchanged scalar</returns>
     public static Scalar operator +(in Scalar m) => m;
+
+    /// <summary>
+    /// Negates the given scalar
+    /// </summary>
+    /// <param name="m">Original scalar</param>
+    /// <returns>Negated scalar</returns>
+    public static Scalar operator -(Scalar m) => m.Negate();
 
     /// <summary>
     /// Negates the given scalar
@@ -933,7 +1155,17 @@ public unsafe readonly partial struct Scalar
     /// <param name="m1">First scalar</param>
     /// <param name="m2">Second scalar</param>
     /// <returns>Subtraction result</returns>
+    public static Scalar operator -(Scalar m1, Scalar m2) => m1.Subtract(m2);
+
+    /// <summary>
+    /// Performs the subtraction of two scalars by subtracting their respective coefficients.
+    /// </summary>
+    /// <param name="m1">First scalar</param>
+    /// <param name="m2">Second scalar</param>
+    /// <returns>Subtraction result</returns>
     public static Scalar operator -(in Scalar m1, in Scalar m2) => m1.Subtract(in m2);
+
+    public static Scalar operator +(Scalar m1, Scalar m2) => m1.Add(m2);
 
     /// <summary>
     /// Performs the addition of two scalars by adding their respective coefficients.
@@ -943,13 +1175,19 @@ public unsafe readonly partial struct Scalar
     /// <returns>Addition result</returns>
     public static Scalar operator +(in Scalar m1, in Scalar m2) => m1.Add(in m2);
 
+    public static Scalar operator *(Scalar m, Scalar v) => m.Multiply(v);
+
     public static Scalar operator *(in Scalar m, in Scalar v) => m.Multiply(in v);
 
     public static Scalar operator ^(in Scalar b, Scalar e) => b.Power(e);
 
     public static Scalar operator ^(in Scalar b, int e) => b.Power(e);
 
+    public static Scalar operator /(Scalar m, Scalar f) => m.Divide(f);
+
     public static Scalar operator /(in Scalar m, in Scalar f) => m.Divide(in f);
+
+    public static Scalar operator %(Scalar m, Scalar f) => m.Divide(f);
 
     public static Scalar operator %(in Scalar m, in Scalar f) => m.Modulus(in f);
 
@@ -1021,17 +1259,17 @@ public unsafe readonly partial struct Scalar
 
     public static explicit operator sbyte(Scalar m) => (sbyte)m.Determinant;
 
+    public static implicit operator Scalar(Scalar<Half> t) => new((__scalar)t.Value);
+
     public static implicit operator Scalar(Scalar<float> t) => new((__scalar)t.Value);
 
     public static implicit operator Scalar(Scalar<double> t) => new((__scalar)t.Value);
 
+    public static implicit operator Scalar<Half>(Scalar m) => new((Half)m.Determinant);
+
     public static implicit operator Scalar<float>(Scalar m) => new((float)m.Determinant);
 
     public static implicit operator Scalar<double>(Scalar m) => new((double)m.Determinant);
-
-
-
-
 
     #endregion
 }
@@ -1043,6 +1281,7 @@ public unsafe readonly partial struct Scalar<T>
     , Algebra<Scalar<T>>.IVector<Scalar<T>, Scalar<T>>
     , Algebra<Scalar<T>, Polynomial<T>>.IComposite1D
     , Algebra<Scalar<T>, Polynomial<T>>.IMatrix<Scalar<T>, MatrixNM<T>>
+    , num.IFloatingPointIeee754<Scalar<T>>
     , IComparable<Scalar<T>>
     , IEquatable<Scalar<T>>
     , IComparable
@@ -1058,23 +1297,50 @@ public unsafe readonly partial struct Scalar<T>
     #endregion
     #region STATIC PROPERTIES
 
+#pragma warning disable IDE1006
+    public static Scalar<T> π { get; } = new(T.Pi);
+
+    public static Scalar<T> τ { get; } = new(T.Tau);
+
+    public static Scalar<T> e { get; } = new(T.E);
+#pragma warning restore IDE1006
+    static Scalar<T> num.IFloatingPointConstants<Scalar<T>>.E => e;
+
+    public static Scalar<T> Pi => π;
+
+    public static Scalar<T> Tau => τ;
+
+    public static Scalar<T> PiHalf { get; } = π.Divide(Two);
+
     public static Scalar<T> Zero { get; }
 
-    public static Scalar<T> One { get; }
+    public static Scalar<T> NegativeZero { get; } = new(T.NegativeZero);
 
-    public static Scalar<T> NegativeOne { get; }
+    public static Scalar<T> One { get; } = new(T.One);
 
-    public static Scalar<T> Two { get; }
+    public static Scalar<T> NegativeOne { get; } = new(T.NegativeOne);
 
-    public static Scalar<T> PositiveInfinity => One / Zero;
+    public static Scalar<T> Two { get; } = One.Add(One);
 
-    public static Scalar<T> NegativeInfinity => NegativeOne / Zero;
+    public static Scalar<T> PositiveInfinity { get; } = new(T.PositiveInfinity);
 
-    public static Scalar<T> NaN => Zero / Zero;
+    public static Scalar<T> NegativeInfinity { get; } = new(T.NegativeInfinity);
 
-    static Scalar<T> IScalar<Scalar<T>>.MinValue => MathFunction(() => __scalar.MinValue);
+    public static Scalar<T> NaN { get; } = new(T.NaN);
 
-    static Scalar<T> IScalar<Scalar<T>>.MaxValue => MathFunction(() => __scalar.MaxValue);
+    public static Scalar<T> IEEE754Epsilon { get; } = new(T.Epsilon);
+
+    static Scalar<T> num.IFloatingPointIeee754<Scalar<T>>.Epsilon => IEEE754Epsilon;
+
+    static int num.INumberBase<Scalar<T>>.Radix => T.Radix;
+
+    static Scalar<T> num.IAdditiveIdentity<Scalar<T>, Scalar<T>>.AdditiveIdentity { get; } = new(T.AdditiveIdentity);
+
+    static Scalar<T> num.IMultiplicativeIdentity<Scalar<T>, Scalar<T>>.MultiplicativeIdentity { get; } = new(T.MultiplicativeIdentity);
+
+    public static Scalar<T> MinValue { get; } = new(T.BitIncrement(T.NegativeInfinity));
+
+    public static Scalar<T> MaxValue { get; } = new(T.BitDecrement(T.PositiveInfinity));
 
     public static ScalarEqualityComparer<T> EqualityComparer { get; } = new ScalarEqualityComparer<T>();
 
@@ -1104,19 +1370,21 @@ public unsafe readonly partial struct Scalar<T>
 
     public readonly T Value { get; }
 
-    public readonly bool IsNaN => Is(NaN) || MathFunction(__scalar.IsNaN);
+    public readonly bool IsNaN => T.IsNaN(Value) || Is(NaN);
 
-    public readonly bool IsNegative => this < Zero;
+    public readonly bool IsNegative => T.IsZero(Value) || this < Zero;
 
-    public readonly bool IsPositive => this > Zero;
+    public readonly bool IsPositive => T.IsPositive(Value) || this > Zero;
 
-    public readonly bool IsPositiveDefinite => IsPositive;
+    public readonly bool IsPositiveDefinite => IsPositive && IsFinite;
 
-    public readonly bool IsNegativeInfinity => Is(NegativeInfinity) || MathFunction(__scalar.IsNegative);
+    public readonly bool IsNegativeDefinite => IsNegative && IsFinite;
 
-    public readonly bool IsPositiveInfinity => Is(PositiveInfinity) || MathFunction(__scalar.IsPositiveInfinity);
+    public readonly bool IsNegativeInfinity => T.IsNegativeInfinity(Value) || Is(NegativeInfinity);
 
-    public readonly bool IsInfinity => IsNegativeInfinity || IsPositiveInfinity || MathFunction(__scalar.IsInfinity);
+    public readonly bool IsPositiveInfinity => T.IsPositiveInfinity(Value) || Is(PositiveInfinity);
+
+    public readonly bool IsInfinity => IsNegativeInfinity || IsPositiveInfinity;
 
     public readonly bool IsFinite => !IsInfinity && !IsNaN;
 
@@ -1164,7 +1432,7 @@ public unsafe readonly partial struct Scalar<T>
     public readonly Scalar<T> Phi => PrimeFactors is { Length: 2 } f ? f[0].Decrement().Multiply(f[1].Decrement()) : throw new InvalidOperationException($"φ({this}) is not defined.");
 
     #endregion
-    #region EXPLICIT PROPERTIES
+    #region EXPLICIT INSTANCE PROPERTIES
 
     readonly Scalar<T> Algebra<Scalar<T>>.IMatrix<Scalar<T>>.GaussianReduced => IsZero ? Zero : One;
 
@@ -1247,81 +1515,6 @@ public unsafe readonly partial struct Scalar<T>
     #endregion
     #region .CTOR / .CCTOR / .DTOR
 
-    static Scalar()
-    {
-        Type T = typeof(T);
-        OpType[] critical =
-        [
-            OpType.op_Equality,
-            OpType.op_Addition,
-            OpType.op_UnaryNegation,
-            OpType.op_Division,
-            OpType.op_Multiply,
-            OpType.op_Modulus,
-        ];
-
-        _zero = default;
-        _one = LINQ.TryAll<T>(
-            () => (dynamic)_zero + 1,
-            () =>
-            {
-                dynamic _1 = _zero;
-
-                return _1++;
-            },
-            () => (T)typeof(T).GetMethod("Increment", BindingFlags.Instance | BindingFlags.Public)!.Invoke(_zero, [])!,
-            () => (dynamic)_zero + (T)(dynamic)1
-        ); // TODO : fix this shit!
-
-        foreach (OpType op in Enum.GetValues(typeof(OpType)))
-        {
-            try
-            {
-                _operators[op] = T.GetMethod(op.ToString(), BindingFlags.Static | BindingFlags.Public)!;
-            }
-            catch (AmbiguousMatchException)
-            {
-                Type tref = typeof(T).MakeByRefType();
-                _operators[op] = (from method in T.GetMethods(BindingFlags.Static | BindingFlags.Public)
-                                  where method.Name == op.ToString()
-                                  let pars = method.GetParameters()
-                                  let pt0 = pars[0].ParameterType
-                                  let pt1 = pars[1].ParameterType
-                                  where pt0.IsAssignableFrom(typeof(T)) || pt0.IsAssignableFrom(tref)
-                                  where pt1.IsAssignableFrom(typeof(T)) || pt1.IsAssignableFrom(tref)
-                                  select method).FirstOrDefault();
-            }
-            catch
-            {
-            }
-
-            if (!_operators.TryGetValue(op, out MethodInfo? m) || m is null)
-                _operators[op] = (op switch
-                {
-                    _ when critical.Contains(op) => throw new InvalidOperationException($"The type '{T}' canot be useed as generic parameter for the type '{typeof(Scalar<>)}', as it does not implement the operator '{op}'."),
-                    OpType.op_Inequality => (Delegate)new Func<object, T, T, bool>((_, t1, t2) => !OP<bool>(OpType.op_Equality, t1, t2)),
-                    OpType.op_GreaterThan => new Func<object, T, T, bool>((_, t1, t2) => t1.CompareTo(t2) > 0),
-                    OpType.op_LessThan => new Func<object, T, T, bool>((_, t1, t2) => t1.CompareTo(t2) < 0),
-                    OpType.op_GreaterThanOrEqual => new Func<object, T, T, bool>((_, t1, t2) => t1.CompareTo(t2) >= 0),
-                    OpType.op_LessThanOrEqual => new Func<object, T, T, bool>((_, t1, t2) => t1.CompareTo(t2) <= 0),
-                    OpType.op_Subtraction => new Func<object, T, T, T>((_, t1, t2) => OP<T>(OpType.op_Addition, t1, OP(OpType.op_UnaryNegation, t2))),
-                    OpType.op_UnaryPlus => new Func<object, T, T>((_, t) => t),
-                    OpType.op_Increment => new Func<object, T, T, T>((_, t1, t2) => OP<T>(OpType.op_Addition, t1, _one)),
-                    OpType.op_Decrement => new Func<object, T, T, T>((_, t1, t2) => OP<T>(OpType.op_Addition, t1, OP(OpType.op_UnaryNegation, _one))),
-                    _ => throw new InvalidProgramException(),
-                }).Method;
-        }
-
-        foreach (MethodInfo? nfo in _operators.Values)
-            if (nfo is { })
-                RuntimeHelpers.PrepareMethod(nfo.MethodHandle);
-
-        Zero = new(_zero);
-        One = new(_one);
-        Two = One + One;
-        NegativeOne = -One;
-    }
-
     public Scalar(T* ptr)
         : this(*ptr)
     {
@@ -1342,15 +1535,31 @@ public unsafe readonly partial struct Scalar<T>
     #endregion
     #region INSTANCE METHODS
 
-    public readonly Scalar<T> Negate() => OP(OpType.op_UnaryNegation);
+    public readonly Scalar<T> Negate() => new(-Value);
 
-    public readonly Scalar<T> Add(in Scalar<T> second) => OP(OpType.op_Addition, second);
+    public readonly Scalar<T> Add(in Scalar<T> second) => new(Value + second.Value);
 
-    public readonly Scalar<T> Add(params Scalar<T>[] others) => others.Aggregate(this, Add);
+    public readonly Scalar<T> Add(params Scalar<T>[] others)
+    {
+        T value = Value;
 
-    public readonly Scalar<T> Subtract(in Scalar<T> second) => OP(OpType.op_Subtraction, second);
+        foreach (Scalar<T> scalar in others)
+            value += scalar.Value;
 
-    public readonly Scalar<T> Subtract(params Scalar<T>[] others) => others.Aggregate(this, Subtract);
+        return new(value);
+    }
+
+    public readonly Scalar<T> Subtract(in Scalar<T> second) => new(Value - second.Value);
+
+    public readonly Scalar<T> Subtract(params Scalar<T>[] others)
+    {
+        T value = Value;
+
+        foreach (Scalar<T> scalar in others)
+            value -= scalar.Value;
+
+        return new(value);
+    }
 
     public readonly Scalar<T> Increment() => Add(One);
 
@@ -1358,21 +1567,31 @@ public unsafe readonly partial struct Scalar<T>
 
     public readonly Scalar<T> Dot(in Scalar<T> second) => Multiply(second);
 
-    public readonly Scalar<T> Multiply(in Scalar<T> second) => OP(OpType.op_Multiply, second);
+    public readonly Scalar<T> Multiply(Scalar<T> second) => new(Value * second.Value);
 
-    public readonly Scalar<T> Multiply(params Scalar<T>[] others) => others.Aggregate(this, Multiply);
+    public readonly Scalar<T> Multiply(in Scalar<T> second) => new(Value * second.Value);
 
-    public readonly Scalar<T> Divide(in Scalar<T> second) => OP(OpType.op_Division, second);
+    public readonly Scalar<T> Multiply(params Scalar<T>[] others)
+    {
+        T value = Value;
+
+        foreach (Scalar<T> scalar in others)
+            value *= scalar.Value;
+
+        return new(value);
+    }
+
+    public readonly Scalar<T> Divide(Scalar<T> second) => new(Value / second.Value);
+
+    public readonly Scalar<T> Divide(in Scalar<T> second) => new(Value / second.Value);
 
     public readonly (Scalar<T> Factor, Scalar<T> Remainder) DivideModulus(in Scalar<T> second) => (Divide(in second), Modulus(in second));
 
-    public readonly Scalar<T> Modulus(Scalar<T> second) => OP(OpType.op_Modulus, second);
+    public readonly Scalar<T> Modulus(Scalar<T> second) => new(Value % second.Value);
 
-    public readonly Scalar<T> Modulus(in Scalar<T> second) => OP(OpType.op_Modulus, second);
+    public readonly Scalar<T> Modulus(in Scalar<T> second) => new(Value % second.Value);
 
-    public readonly Scalar<T> Multiply(Scalar<T> second) => OP(OpType.op_Multiply, second);
-
-    public readonly Scalar<T> Divide(Scalar<T> second) => OP(OpType.op_Division, second);
+    public readonly Scalar<T> Power(Scalar<T> power) => new(T.Pow(Value, power.Value));
 
     public readonly Scalar<T> Power(int e)
     {
@@ -1399,6 +1618,58 @@ public unsafe readonly partial struct Scalar<T>
         return r;
     }
 
+    public readonly Scalar<T> Sqrt() => new(T.Sqrt(Value));
+
+    public readonly Scalar<T> Cbrt() => new(T.Cbrt(Value));
+
+    public readonly Scalar<T> ScaleB(int n) => new(T.ScaleB(Value, n));
+
+    public readonly Scalar<T> RootN(int n) => new(T.RootN(Value, n));
+
+    public readonly Scalar<T> Exp() => new(T.Exp(Value));
+
+    public readonly Scalar<T> Exp2() => new(T.Exp2(Value));
+
+    public readonly Scalar<T> Exp10() => new(T.Exp10(Value));
+
+    public readonly int ILogB() => T.ILogB(Value);
+
+    public readonly Scalar<T> Log() => new(T.Log(Value));
+
+    public readonly Scalar<T> Log2() => new(T.Log2(Value));
+
+    public readonly Scalar<T> Log10() => new(T.Log10(Value));
+
+    public readonly Scalar<T> Sinc() => Sin(Multiply(Pi)).Divide(Tau);
+
+    public readonly Scalar<T> AcosPi() => new(T.AcosPi(Value));
+
+    public readonly Scalar<T> AsinPi() => new(T.AsinPi(Value));
+
+    public readonly Scalar<T> AtanPi() => new(T.AtanPi(Value));
+
+    public readonly Scalar<T> CosPi() => new(T.CosPi(Value));
+
+    public readonly Scalar<T> SinPi() => new(T.SinPi(Value));
+
+    public readonly Scalar<T> TanPi() => new(T.TanPi(Value));
+
+    public readonly Scalar<T> BitDecrement() => new(T.BitDecrement(Value));
+
+    public readonly Scalar<T> BitIncrement() => new(T.BitIncrement(Value));
+
+    public readonly (Scalar<T> Sin, Scalar<T> Cos) SinCos() => (Sin(), Cos());
+
+    public readonly (Scalar<T> SinPi, Scalar<T> CosPi) SinCosPi() => (SinPi(), CosPi());
+
+    public readonly Scalar<T> Round() => Round(0);
+
+    public readonly Scalar<T> Round(int digits) => Round(digits, default);
+
+    public readonly Scalar<T> Round(MidpointRounding mode) => Round(0, mode);
+
+    public readonly Scalar<T> Round(int digits, MidpointRounding mode) => new(T.Round(Value, digits, mode));
+
     public readonly Scalar<T> Clamp() => Clamp(Zero, One);
 
     public readonly Scalar<T> Clamp(Scalar<T> low, Scalar<T> high) => Max(low).Min(high);
@@ -1413,16 +1684,6 @@ public unsafe readonly partial struct Scalar<T>
     public readonly Scalar<T> Max(Scalar<T> second) => this >= second ? this : second;
 
     public readonly Scalar<T> Abs() => IsNegative ? Negate() : this;
-
-    public readonly Scalar<T> Sqrt() => new(T.Sqrt(Value));
-
-    public readonly Scalar<T> Cbrt() => new(T.Cbrt(Value));
-
-    public readonly Scalar<T> RootN(int n) => new(T.RootN(Value, n));
-
-    public readonly Scalar<T> Exp() => new(T.Exp(Value));
-
-    public readonly Scalar<T> Log() => new(T.Log(Value));
 
     public readonly Scalar<T> Sin() => new(T.Sin(Value));
 
@@ -1512,9 +1773,17 @@ public unsafe readonly partial struct Scalar<T>
 
     public readonly object Clone() => new Scalar<T>(this);
 
-    public readonly Scalar<T>[] ToArray() => new[] { this };
+    public readonly Scalar<T>[] ToArray() => [this];
 
     public readonly Polynomial<T> ToPolynomial() => new(this);
+
+    public readonly string ToString(string format) => ToString(format, null);
+
+    public readonly string ToString(IFormatProvider prov) => ToString(null, prov);
+
+    public readonly string ToString(string? format, IFormatProvider? prov) => Value.ToString(format, prov);
+
+    bool ISpanFormattable.TryFormat(Span<char> destination, out int charsWritten, ReadOnlySpan<char> format, IFormatProvider? provider) => Value.TryFormat(destination, out charsWritten, format, provider);
 
     #endregion
     #region EXPLICIT METHODS
@@ -1603,24 +1872,40 @@ public unsafe readonly partial struct Scalar<T>
     readonly Scalar<T> Algebra<Scalar<T>>.IMatrix<Scalar<T>, Scalar<T>>.AddColumns(int src_col, int dst_col, Scalar<T> factor) =>
         (src_col, dst_col) == (0, 0) ? Multiply( factor.Increment()) : throw new ArgumentException("The source and destination columns must have the index zero.");
 
+    readonly int num.IFloatingPoint<Scalar<T>>.GetExponentByteCount() => ((num.IFloatingPoint<T>)Value).GetExponentByteCount();
+
+    readonly int num.IFloatingPoint<Scalar<T>>.GetExponentShortestBitLength() => ((num.IFloatingPoint<T>)Value).GetExponentShortestBitLength();
+
+    readonly int num.IFloatingPoint<Scalar<T>>.GetSignificandBitLength() => ((num.IFloatingPoint<T>)Value).GetSignificandBitLength();
+
+    readonly int num.IFloatingPoint<Scalar<T>>.GetSignificandByteCount() => ((num.IFloatingPoint<T>)Value).GetSignificandByteCount();
+
+    readonly bool num.IFloatingPoint<Scalar<T>>.TryWriteExponentBigEndian(Span<byte> destination, out int bytesWritten) => ((num.IFloatingPoint<T>)Value).TryWriteExponentBigEndian(destination, out bytesWritten);
+
+    readonly bool num.IFloatingPoint<Scalar<T>>.TryWriteExponentLittleEndian(Span<byte> destination, out int bytesWritten) => ((num.IFloatingPoint<T>)Value).TryWriteExponentLittleEndian(destination, out bytesWritten);
+
+    readonly bool num.IFloatingPoint<Scalar<T>>.TryWriteSignificandBigEndian(Span<byte> destination, out int bytesWritten) => ((num.IFloatingPoint<T>)Value).TryWriteSignificandBigEndian(destination, out bytesWritten);
+
+    readonly bool num.IFloatingPoint<Scalar<T>>.TryWriteSignificandLittleEndian(Span<byte> destination, out int bytesWritten) => ((num.IFloatingPoint<T>)Value).TryWriteSignificandLittleEndian(destination, out bytesWritten);
+
     #endregion
     #region PRIVATE METHODS
 
-    private bool MathFunction(Func<__scalar, bool> func) => func((__scalar)(dynamic)Value);
+    //private bool MathFunction(Func<__scalar, bool> func) => func((__scalar)(dynamic)Value);
 
-    static private Scalar<T> MathFunction(Func<__scalar> func) => new((T)(dynamic)(__scalar)func());
+    //static private Scalar<T> MathFunction(Func<__scalar> func) => new((T)(dynamic)(__scalar)func());
 
-    private Scalar<T> MathFunction(Func<__scalar, __scalar> func) => new((T)(dynamic)(__scalar)func((__scalar)(dynamic)Value));
+    //private Scalar<T> MathFunction(Func<__scalar, __scalar> func) => new((T)(dynamic)(__scalar)func((__scalar)(dynamic)Value));
 
-    private Scalar<T> OP(OpType op) => new(OP(op, Value));
+    //private Scalar<T> OP(OpType op) => new(OP(op, Value));
 
-    private Scalar<T> OP(OpType op, Scalar<T> t) => new(OP<T>(op, Value, t.Value));
+    //private Scalar<T> OP(OpType op, Scalar<T> t) => new(OP<T>(op, Value, t.Value));
 
-    private U OP<U>(OpType op, Scalar<T> t) => OP<U>(op, Value, t.Value);
+    //private U OP<U>(OpType op, Scalar<T> t) => OP<U>(op, Value, t.Value);
 
-    private static T OP(OpType op, T t) => _operators[op].Invoke(null, new object[] { t }) is object result ? (T)result : throw new InvalidProgramException();
+    //private static T OP(OpType op, T t) => _operators[op].Invoke(null, new object[] { t }) is object result ? (T)result : throw new InvalidProgramException();
 
-    private static U OP<U>(OpType op, T t1, T t2) => _operators[op].Invoke(null, new object[] { t1, t2 }) is object result ? (U)result : throw new InvalidProgramException();
+    //private static U OP<U>(OpType op, T t1, T t2) => _operators[op].Invoke(null, new object[] { t1, t2 }) is object result ? (U)result : throw new InvalidProgramException();
 
     #endregion
     #region STATIC METHODS
@@ -1643,10 +1928,207 @@ public unsafe readonly partial struct Scalar<T>
 
     public static Scalar<T> Modulus(Scalar<T> s1, Scalar<T> s2) => s1.Modulus(s2);
 
-    // TODO : parse
+    public static int ILogB(Scalar<T> x) => x.ILogB();
+
+    public static Scalar<T> Cbrt(Scalar<T> x) => x.Cbrt();
+
+    public static Scalar<T> RootN(Scalar<T> x, int n) => x.RootN(n);
+
+    public static Scalar<T> ScaleB(Scalar<T> x, int n) => x.ScaleB(n);
+
+    public static Scalar<T> Exp10(Scalar<T> x) => x.Exp10();
+
+    public static Scalar<T> Exp2(Scalar<T> x) => x.Exp2();
+
+    public static Scalar<T> Exp(Scalar<T> x) => x.Exp();
+
+    public static Scalar<T> Log10(Scalar<T> x) => x.Log10();
+
+    public static Scalar<T> Log2(Scalar<T> x) => x.Log2();
+
+    public static Scalar<T> Hypot(Scalar<T> x, Scalar<T> y) => Sqrt(x.Multiply(x).Add(y.Multiply(y)));
+
+    public static Scalar<T> Power(Scalar<T> x, Scalar<T> y) => x.Power(y);
+
+    public static Scalar<T> Log(Scalar<T> s) => s.Log();
+
+    public static Scalar<T> Log(Scalar<T> s, Scalar<T> basis) => s.Log().Divide(basis.Log());
+
+    public static Scalar<T> Sinc(Scalar<T> s) => s.Sinc();
+
+    public static Scalar<T> Sin(Scalar<T> s) => s.Sin();
+
+    public static Scalar<T> Cos(Scalar<T> s) => s.Cos();
+
+    public static Scalar<T> Tan(Scalar<T> s) => s.Tan();
+
+    public static Scalar<T> Cot(Scalar<T> s) => s.Cot();
+
+    public static Scalar<T> Sec(Scalar<T> s) => s.Sec();
+
+    public static Scalar<T> Csc(Scalar<T> s) => s.Csc();
+
+    public static Scalar<T> Asin(Scalar<T> s) => s.Asin();
+
+    public static Scalar<T> Acos(Scalar<T> s) => s.Acos();
+
+    public static Scalar<T> Atan(Scalar<T> s) => s.Atan();
+
+    public static Scalar<T> Acot(Scalar<T> s) => s.Acot();
+
+    public static Scalar<T> Acsc(Scalar<T> s) => s.Acsc();
+
+    public static Scalar<T> Asec(Scalar<T> s) => s.Asec();
+
+    public static Scalar<T> Sinh(Scalar<T> s) => s.Sinh();
+
+    public static Scalar<T> Cosh(Scalar<T> s) => s.Cosh();
+
+    public static Scalar<T> Tanh(Scalar<T> s) => s.Tanh();
+
+    public static Scalar<T> Coth(Scalar<T> s) => s.Coth();
+
+    public static Scalar<T> Sech(Scalar<T> s) => s.Sech();
+
+    public static Scalar<T> Csch(Scalar<T> s) => s.Csch();
+
+    public static Scalar<T> Asinh(Scalar<T> s) => s.Asinh();
+
+    public static Scalar<T> Acosh(Scalar<T> s) => s.Acosh();
+
+    public static Scalar<T> Atanh(Scalar<T> s) => s.Atanh();
+
+    public static Scalar<T> Acoth(Scalar<T> s) => s.Acoth();
+
+    public static Scalar<T> Acsch(Scalar<T> s) => s.Acsch();
+
+    public static Scalar<T> Asech(Scalar<T> s) => s.Asech();
+
+    public static Scalar<T> AcosPi(Scalar<T> x) => x.AcosPi();
+
+    public static Scalar<T> AsinPi(Scalar<T> x) => x.AsinPi();
+
+    public static Scalar<T> AtanPi(Scalar<T> x) => x.AtanPi();
+
+    public static Scalar<T> CosPi(Scalar<T> x) => x.CosPi();
+
+    public static Scalar<T> SinPi(Scalar<T> x) => x.SinPi();
+
+    public static Scalar<T> TanPi(Scalar<T> x) => x.TanPi();
+
+    public static Scalar<T> Atan2(Scalar<T> y, Scalar<T> x) => new(T.Atan2(y.Value, x.Value));
+
+    public static Scalar<T> Atan2Pi(Scalar<T> y, Scalar<T> x) => new(T.Atan2Pi(y.Value, x.Value));
+
+    public static (Scalar<T> Sin, Scalar<T> Cos) SinCos(Scalar<T> x) => x.SinCos();
+
+    public static (Scalar<T> SinPi, Scalar<T> CosPi) SinCosPi(Scalar<T> x) => x.SinCosPi();
+
+    public static Scalar<T> Round(Scalar<T> x) => x.Round();
+
+    public static Scalar<T> Round(Scalar<T> x, int digits) => x.Round(digits);
+
+    public static Scalar<T> Round(Scalar<T> x, MidpointRounding mode) => x.Round(mode);
+
+    public static Scalar<T> Round(Scalar<T> x, int digits, MidpointRounding mode) => x.Round(digits, mode);
+
+    public static Scalar<T> Max(Scalar<T> x, Scalar<T> y) => x.Max(y);
+
+    public static Scalar<T> Min(Scalar<T> x, Scalar<T> y) => x.Min(y);
+
+    public static Scalar<T> MaxMagnitude(Scalar<T> x, Scalar<T> y) => new(T.MaxMagnitude(x.Value, y.Value));
+
+    public static Scalar<T> MaxMagnitudeNumber(Scalar<T> x, Scalar<T> y) => new(T.MaxMagnitudeNumber(x.Value, y.Value));
+
+    public static Scalar<T> MinMagnitude(Scalar<T> x, Scalar<T> y) => new(T.MinMagnitude(x.Value, y.Value));
+
+    public static Scalar<T> MinMagnitudeNumber(Scalar<T> x, Scalar<T> y) => new(T.MinMagnitudeNumber(x.Value, y.Value));
+
+    public static Scalar<T> BitDecrement(Scalar<T> x) => x.BitDecrement();
+
+    public static Scalar<T> BitIncrement(Scalar<T> x) => x.BitIncrement();
+
+    public static Scalar<T> FusedMultiplyAdd(Scalar<T> left, Scalar<T> right, Scalar<T> addend) => new(T.FusedMultiplyAdd(left.Value, right.Value, addend.Value));
+
+    public static Scalar<T> Ieee754Remainder(Scalar<T> left, Scalar<T> right) => new(T.Ieee754Remainder(left.Value, right.Value));
+
+    public static bool TryParse(string? str, NumberStyles style, IFormatProvider? provider, out Scalar<T> scalar)
+    {
+        bool success = T.TryParse(str, style, provider, out T value);
+
+        scalar = success ? new(value) : default;
+
+        return success;
+    }
+
+    public static bool TryParse(string? s, IFormatProvider? provider, out Scalar<T> result) => TryParse(s, NumberStyles.Float, provider, out result);
+
+    public static bool TryParse(string? s, out Scalar<T> result) => TryParse(s, null, out result);
+
+    public static bool TryParse(ReadOnlySpan<char> s, NumberStyles style, IFormatProvider? provider, out Scalar<T> result) => TryParse(new string(s), style, provider, out result);
+
+    public static bool TryParse(ReadOnlySpan<char> s, IFormatProvider? provider, out Scalar<T> result) => TryParse(s, NumberStyles.Float, provider, out result);
+
+    public static bool TryParse(ReadOnlySpan<char> s, out Scalar<T> result) => TryParse(s, null, out result);
+
+    public static Scalar<T> Parse(string s, NumberStyles style, IFormatProvider? provider) => TryParse(s, style, provider, out Scalar<T> value) ? value : throw new FormatException();
+
+    public static Scalar<T> Parse(ReadOnlySpan<char> s, NumberStyles style, IFormatProvider? provider) => TryParse(s, style, provider, out Scalar<T> value) ? value : throw new FormatException();
+
+    public static Scalar<T> Parse(ReadOnlySpan<char> s, IFormatProvider? provider) => TryParse(s, provider, out Scalar<T> value) ? value : throw new FormatException();
+
+    public static Scalar<T> Parse(ReadOnlySpan<char> s) => TryParse(s, out Scalar<T> value) ? value : throw new FormatException();
+
+    public static Scalar<T> Parse(string s, IFormatProvider? provider) => TryParse(s, provider, out Scalar<T> value) ? value : throw new FormatException();
+
+    public static Scalar<T> Parse(string s) => TryParse(s, out Scalar<T> value) ? value : throw new FormatException();
 
     public static Scalar<T> FromArray(params Scalar<T>[] coefficients) =>
         coefficients.Length != 1 ? throw new ArgumentException("Invalid array length.", nameof(coefficients)) : coefficients[0];
+
+    static Scalar<T> num.IPowerFunctions<Scalar<T>>.Pow(Scalar<T> x, Scalar<T> y) => Power(x, y);
+
+    static bool num.INumberBase<Scalar<T>>.IsCanonical(Scalar<T> value) => T.IsCanonical(value.Value);
+
+    static bool num.INumberBase<Scalar<T>>.IsComplexNumber(Scalar<T> value) => T.IsComplexNumber(value.Value);
+
+    static bool num.INumberBase<Scalar<T>>.IsEvenInteger(Scalar<T> value) => T.IsEvenInteger(value.Value);
+
+    static bool num.INumberBase<Scalar<T>>.IsFinite(Scalar<T> value) => T.IsFinite(value.Value);
+
+    static bool num.INumberBase<Scalar<T>>.IsImaginaryNumber(Scalar<T> value) => T.IsImaginaryNumber(value.Value);
+
+    static bool num.INumberBase<Scalar<T>>.IsInfinity(Scalar<T> value) => T.IsInfinity(value.Value);
+
+    static bool num.INumberBase<Scalar<T>>.IsInteger(Scalar<T> value) => T.IsInteger(value.Value);
+
+    static bool num.INumberBase<Scalar<T>>.IsNaN(Scalar<T> value) => T.IsNaN(value.Value);
+
+    static bool num.INumberBase<Scalar<T>>.IsNegative(Scalar<T> value) => T.IsNegative(value.Value);
+
+    static bool num.INumberBase<Scalar<T>>.IsNegativeInfinity(Scalar<T> value) => T.IsNegativeInfinity(value.Value);
+
+    static bool num.INumberBase<Scalar<T>>.IsNormal(Scalar<T> value) => T.IsNormal(value.Value);
+
+    static bool num.INumberBase<Scalar<T>>.IsOddInteger(Scalar<T> value) => T.IsOddInteger(value.Value);
+
+    static bool num.INumberBase<Scalar<T>>.IsPositive(Scalar<T> value) => T.IsPositive(value.Value);
+
+    static bool num.INumberBase<Scalar<T>>.IsPositiveInfinity(Scalar<T> value) => T.IsPositiveInfinity(value.Value);
+
+    static bool num.INumberBase<Scalar<T>>.IsRealNumber(Scalar<T> value) => T.IsRealNumber(value.Value);
+
+    static bool num.INumberBase<Scalar<T>>.IsSubnormal(Scalar<T> value) => T.IsSubnormal(value.Value);
+
+    static bool num.INumberBase<Scalar<T>>.IsZero(Scalar<T> value) => T.IsZero(value.Value);
+
+
+    static bool num.INumberBase<Scalar<T>>.TryConvertFromChecked<TOther>(TOther value, out Scalar<T> result) => throw new NotImplementedException();
+    static bool num.INumberBase<Scalar<T>>.TryConvertFromSaturating<TOther>(TOther value, out Scalar<T> result) => throw new NotImplementedException();
+    static bool num.INumberBase<Scalar<T>>.TryConvertFromTruncating<TOther>(TOther value, out Scalar<T> result) => throw new NotImplementedException();
+    static bool num.INumberBase<Scalar<T>>.TryConvertToChecked<TOther>(Scalar<T> value, out TOther result) => throw new NotImplementedException();
+    static bool num.INumberBase<Scalar<T>>.TryConvertToSaturating<TOther>(Scalar<T> value, out TOther result) => throw new NotImplementedException();
+    static bool num.INumberBase<Scalar<T>>.TryConvertToTruncating<TOther>(Scalar<T> value, out TOther result) => throw new NotImplementedException();
 
     #endregion
     #region OPERATORS
@@ -1659,25 +2141,39 @@ public unsafe readonly partial struct Scalar<T>
 
     public static bool operator !=(Scalar<T> s1, Scalar<T> s2) => !(s1 == s2);
 
-    public static bool operator <(Scalar<T> s1, Scalar<T> s2) => OP<bool>(OpType.op_LessThan, s1, s2);
+    public static bool operator <(Scalar<T> s1, Scalar<T> s2) => s1.CompareTo(s2) < 0;
 
-    public static bool operator >(Scalar<T> s1, Scalar<T> s2) => OP<bool>(OpType.op_GreaterThan, s1, s2);
+    public static bool operator >(Scalar<T> s1, Scalar<T> s2) => s1.CompareTo(s2) > 0;
 
-    public static bool operator <=(Scalar<T> s1, Scalar<T> s2) => OP<bool>(OpType.op_LessThanOrEqual, s1, s2);
+    public static bool operator <=(Scalar<T> s1, Scalar<T> s2) => s1.CompareTo(s2) <= 0;
 
-    public static bool operator >=(Scalar<T> s1, Scalar<T> s2) => OP<bool>(OpType.op_GreaterThanOrEqual, s1, s2);
+    public static bool operator >=(Scalar<T> s1, Scalar<T> s2) => s1.CompareTo(s2) >= 0;
+
+    public static Scalar<T> operator +(Scalar<T> s) => s;
 
     public static Scalar<T> operator +(in Scalar<T> s) => s;
 
+    public static Scalar<T> operator -(Scalar<T> s) => s.Negate();
+
     public static Scalar<T> operator -(in Scalar<T> s) => s.Negate();
+
+    public static Scalar<T> operator ++(Scalar<T> s) => s.Increment();
 
     public static Scalar<T> operator ++(in Scalar<T> s) => s.Increment();
 
+    public static Scalar<T> operator --(Scalar<T> s) => s.Decrement();
+
     public static Scalar<T> operator --(in Scalar<T> s) => s.Decrement();
+
+    public static Scalar<T> operator +(Scalar<T> s1, Scalar<T> s2) => s2.Add(s1);
 
     public static Scalar<T> operator +(in Scalar<T> s1, in Scalar<T> s2) => s2.Add(in s1);
 
+    public static Scalar<T> operator -(Scalar<T> s1, Scalar<T> s2) => s2.Subtract(s1);
+
     public static Scalar<T> operator -(in Scalar<T> s1, in Scalar<T> s2) => s2.Subtract(in s1);
+
+    public static Scalar<T> operator *(Scalar<T> s1, Scalar<T> s2) => s1.Multiply(s2);
 
     public static Scalar<T> operator *(in Scalar<T> s1, in Scalar<T> s2) => s1.Multiply(in s2);
 
@@ -1687,9 +2183,13 @@ public unsafe readonly partial struct Scalar<T>
 
     public static Scalar<T> operator ^(in Scalar<T> s, int c) => s.Power(c);
 
+    public static Scalar<T> operator /(Scalar<T> s1, Scalar<T> s2) => s1.Divide(s2);
+
     public static Scalar<T> operator /(in Scalar<T> s1, in Scalar<T> s2) => s1.Divide(in s2);
 
     public static Scalar<T> operator /(in Scalar<T> s1, Scalar<T> s2) => s1.Divide(s2);
+
+    public static Scalar<T> operator %(Scalar<T> s1, Scalar<T> s2) => s1.Modulus(s2);
 
     public static Scalar<T> operator %(in Scalar<T> s1, in Scalar<T> s2) => s1.Modulus(in s2);
 
