@@ -314,44 +314,49 @@ public abstract class Polygon2D<T>
     , ITriangulizable2D<T>
     where T : Polygon2D<T>
 {
-    public abstract Vector2[] Corners { get; }
+    private Vector2[]? _vertices = null;
+    private Line2D[]? _edges = null;
 
-    public virtual Line2D[] Sides
-    {
-        get
-        {
-            Vector2[] c = Corners;
-            Line2D[] s = new Line2D[c.Length];
 
-            Parallel.For(0, s.Length, i => s[i] = new Line2D(c[i], c[(i + 1) % c.Length]));
+    public Vector2[] Vertices => _vertices ??= GetVertices();
 
-            return s;
-        }
-    }
+    public Line2D[] Edges => _edges ??= GetEdges();
 
     public override Vector2 CenterPoint
     {
         get
         {
-            Vector2[] c = Corners;
+            Vector2[] c = Vertices;
 
             return c[0].Add(c[1..]).Divide(c.Length);
         }
     }
 
-    public override AxisAlignedRectangle2D AxisAlignedBoundingBox => Rectangle2D.CreateAxisAlignedBoundingBox(Corners);
+    public override AxisAlignedRectangle2D AxisAlignedBoundingBox => Rectangle2D.CreateAxisAlignedBoundingBox(Vertices);
 
-    public override Scalar Circumference => Sides.Sum(s => (double)s.Length);
+    public override Scalar Circumference => Edges.Sum(s => (double)s.Length);
 
     public override Scalar SurfaceArea => Triangulize().Sum(t => (double)t.SurfaceArea);
+
+
+    protected abstract Vector2[] GetVertices();
+
+    protected virtual Line2D[] GetEdges()
+    {
+        Vector2[] c = Vertices;
+        Line2D[] s = new Line2D[c.Length];
+
+        Parallel.For(0, s.Length, i => s[i] = new Line2D(c[i], c[(i + 1) % c.Length]));
+
+        return s;
+    }
 
     /// <inheritdoc cref="Triangulize(long)"/>
     public Triangle2D[] Triangulize() => Triangulize(0);
 
-    /// <inheritdoc/>
     public virtual Triangle2D[] Triangulize(long triangle_count_hint)
     {
-        Vector2[] corners = Corners;
+        Vector2[] corners = Vertices;
         List<Triangle2D> triangles = [];
 
         if (corners.Length < 3)
@@ -575,36 +580,34 @@ public sealed class Line2D
 public sealed class Triangle2D
     : Polygon2D<Triangle2D>
 {
-    public Vector2 CornerA { get; }
-    public Vector2 CornerB { get; }
-    public Vector2 CornerC { get; }
+    public Vector2 VertexA { get; }
+    public Vector2 VertexB { get; }
+    public Vector2 VertexC { get; }
 
-    public Line2D SideA => CornerB.To(CornerC);
-    public Line2D SideB => CornerC.To(CornerA);
-    public Line2D SideC => CornerA.To(CornerB);
+    public Line2D EdgeAB => VertexA.To(VertexB);
+    public Line2D EdgeBC => VertexB.To(VertexC);
+    public Line2D EdgeCA => VertexC.To(VertexA);
 
-    public override Vector2[] Corners => [CornerA, CornerB, CornerC];
+    public Line2D MedianA => VertexA.To(EdgeBC.CenterPoint);
+    public Line2D MedianB => VertexB.To(EdgeCA.CenterPoint);
+    public Line2D MedianC => VertexC.To(EdgeAB.CenterPoint);
 
-    public Line2D MedianA => CornerA.To(SideA.CenterPoint);
-    public Line2D MedianB => CornerB.To(SideB.CenterPoint);
-    public Line2D MedianC => CornerC.To(SideC.CenterPoint);
+    public Line2D AltitudeA => EdgeBC.AltitudeTo(VertexA);
+    public Line2D AltitudeB => EdgeCA.AltitudeTo(VertexB);
+    public Line2D AltitudeC => EdgeAB.AltitudeTo(VertexC);
 
-    public Line2D AltitudeA => SideA.AltitudeTo(CornerA);
-    public Line2D AltitudeB => SideB.AltitudeTo(CornerB);
-    public Line2D AltitudeC => SideC.AltitudeTo(CornerC);
-
-    public Scalar AngleA => SideC.Direction.AngleTo(-SideB.Direction);
-    public Scalar AngleB => SideA.Direction.AngleTo(-SideC.Direction);
-    public Scalar AngleC => SideB.Direction.AngleTo(-SideA.Direction);
+    public Scalar AngleA => EdgeAB.Direction.AngleTo(-EdgeCA.Direction);
+    public Scalar AngleB => EdgeBC.Direction.AngleTo(-EdgeAB.Direction);
+    public Scalar AngleC => EdgeCA.Direction.AngleTo(-EdgeBC.Direction);
 
     /// <inheritdoc/>
-    public override AxisAlignedRectangle2D AxisAlignedBoundingBox => Rectangle2D.CreateAxisAlignedBoundingBox(CornerA, CornerB, CornerC);
+    public override AxisAlignedRectangle2D AxisAlignedBoundingBox => Rectangle2D.CreateAxisAlignedBoundingBox(VertexA, VertexB, VertexC);
 
     /// <inheritdoc/>
-    public override Scalar Circumference => SideA.Length + SideB.Length + SideC.Length;
+    public override Scalar Circumference => EdgeBC.Length + EdgeCA.Length + EdgeAB.Length;
 
     /// <inheritdoc/>
-    public override Scalar SurfaceArea => .5 * AltitudeA.Length * SideA.Length;
+    public override Scalar SurfaceArea => .5 * AltitudeA.Length * EdgeBC.Length;
 
     /// <inheritdoc/>
     public override Vector2 CenterPoint => MedianA.GetLenientIntersection(MedianB) ?? throw new InvalidOperationException("The triangle has no computable center point.");
@@ -624,17 +627,19 @@ public sealed class Triangle2D
     /// <param name="c">Third corner point ("C")</param>
     public Triangle2D(Vector2 a, Vector2 b, Vector2 c)
     {
-        CornerA = a;
-        CornerB = b;
-        CornerC = c;
+        VertexA = a;
+        VertexB = b;
+        VertexC = c;
     }
+
+    protected override Vector2[] GetVertices() => [VertexA, VertexB, VertexC];
 
     public (Scalar A, Scalar B, Scalar C) GetBarycentricCoordinates(Vector2 point)
     {
         Matrix3 A = (
-            CornerA.ToHomogeneousCoordinates(),
-            CornerB.ToHomogeneousCoordinates(),
-            CornerC.ToHomogeneousCoordinates()
+            VertexA.ToHomogeneousCoordinates(),
+            VertexB.ToHomogeneousCoordinates(),
+            VertexC.ToHomogeneousCoordinates()
         );
         Vector3 b = point.ToHomogeneousCoordinates();
 
@@ -644,7 +649,7 @@ public sealed class Triangle2D
         return (Scalar.NaN, Scalar.NaN, Scalar.NaN);
     }
 
-    public Vector2 FromBarycentricCoordinates(Scalar a, Scalar b, Scalar c) => (a * CornerA) + (b * CornerB) + (c * CornerC);
+    public Vector2 FromBarycentricCoordinates(Scalar a, Scalar b, Scalar c) => (a * VertexA) + (b * VertexB) + (c * VertexC);
 
     public Vector2 FromBarycentricCoordinates(Vector3 coordinates) => FromBarycentricCoordinates(coordinates.X, coordinates.Y, coordinates.Z);
 
@@ -655,54 +660,54 @@ public sealed class Triangle2D
         return A.Min(B).Min(C) >= 0;
     }
 
-    public override bool Touches(Vector2 point) => Sides.Any(s => s.Contains(point));
+    public override bool Touches(Vector2 point) => Edges.Any(s => s.Contains(point));
 
     public override Line2D? GetNormalAt(Vector2 point)
     {
         Vector2 dir;
 
-        if (point.Is(CornerA))
-            dir = SideB.Direction - SideC.Direction;
-        else if (point.Is(CornerB))
-            dir = SideC.Direction - SideA.Direction;
-        else if (point.Is(CornerC))
-            dir = SideA.Direction - SideB.Direction;
+        if (point.Is(VertexA))
+            dir = EdgeCA.Direction - EdgeAB.Direction;
+        else if (point.Is(VertexB))
+            dir = EdgeAB.Direction - EdgeBC.Direction;
+        else if (point.Is(VertexC))
+            dir = EdgeBC.Direction - EdgeCA.Direction;
         else
-            return Sides.Aggregate(null as Line2D, (n, s) => n ?? s.GetNormalAt(point));
+            return Edges.Aggregate(null as Line2D, (n, s) => n ?? s.GetNormalAt(point));
 
         return new Line2D(point, dir, 1);
     }
 
-    public override bool Equals(Triangle2D? other) => Corners.SetEquals(other?.Corners);
+    public override bool Equals(Triangle2D? other) => Vertices.SetEquals(other?.Vertices);
 
-    public override Triangle2D MirrorAt(Line2D axis) => new(CornerA.MirrorAt(axis), CornerB.MirrorAt(axis), CornerC.MirrorAt(axis));
+    public override Triangle2D MirrorAt(Line2D axis) => new(VertexA.MirrorAt(axis), VertexB.MirrorAt(axis), VertexC.MirrorAt(axis));
 
-    public override Triangle2D MoveBy(Vector2 offset) => new(CornerA + offset, CornerB + offset, CornerC + offset);
+    public override Triangle2D MoveBy(Vector2 offset) => new(VertexA + offset, VertexB + offset, VertexC + offset);
 
-    public override Triangle2D Rotate(Scalar angle) => new(CornerA.Rotate(angle), CornerB.Rotate(angle), CornerC.Rotate(angle));
+    public override Triangle2D Rotate(Scalar angle) => new(VertexA.Rotate(angle), VertexB.Rotate(angle), VertexC.Rotate(angle));
 
     public override Triangle2D Scale(Scalar x, Scalar y) => Transform((x, 0, 0, y));
 
     public override Triangle2D TransformHomogeneous(Matrix3 matrix)
     {
-        Vector2 a = matrix.HomogeneousMultiply(CornerA);
-        Vector2 b = matrix.HomogeneousMultiply(CornerB);
-        Vector2 c = matrix.HomogeneousMultiply(CornerC);
+        Vector2 a = matrix.HomogeneousMultiply(VertexA);
+        Vector2 b = matrix.HomogeneousMultiply(VertexB);
+        Vector2 c = matrix.HomogeneousMultiply(VertexC);
 
         return new Triangle2D(a, b, c);
     }
 
     public void Decompose(out Vector2 a, out Vector2 b, out Vector2 c)
     {
-        a = CornerA;
-        b = CornerB;
-        c = CornerC;
+        a = VertexA;
+        b = VertexB;
+        c = VertexC;
     }
 
 
     public static implicit operator Triangle2D((Vector2 a, Vector2 b, Vector2 c) corners) => new(corners.a, corners.b, corners.c);
 
-    public static implicit operator (Vector2 a, Vector2 b, Vector2 c)(Triangle2D triangle) => (triangle.CornerA, triangle.CornerB, triangle.CornerC);
+    public static implicit operator (Vector2 a, Vector2 b, Vector2 c)(Triangle2D triangle) => (triangle.VertexA, triangle.VertexB, triangle.VertexC);
 }
 
 public class Quadrilateral2D
@@ -734,9 +739,6 @@ public class Parallelogram2D
     public Vector2 BottomRight => _bl_corner + _right_dir;
     public Vector2 TopRight => _bl_corner + _right_dir + _up_dir;
     public Vector2 TopLeft => _bl_corner + _up_dir;
-
-    public override Vector2[] Corners => [BottomLeft, BottomRight, TopRight, TopLeft];
-    public override Line2D[] Sides => [BottomSide, RightSide, TopSide, LeftSide];
 
     public override Vector2 CenterPoint => _bl_corner + .5 * (_right_dir + _up_dir);
 
@@ -791,7 +793,11 @@ public class Parallelogram2D
         _up_dir = up;
     }
 
-    public override bool Touches(Vector2 point) => Sides.Any(s => s.Contains(point));
+    protected override Vector2[] GetVertices() => [BottomLeft, BottomRight, TopRight, TopLeft];
+
+    protected override Line2D[] GetEdges() => [BottomSide, RightSide, TopSide, LeftSide];
+
+    public override bool Touches(Vector2 point) => Edges.Any(s => s.Contains(point));
 
     public override bool Contains(Vector2 point)
     {
@@ -829,7 +835,7 @@ public class Parallelogram2D
         return new Line2D(point, dir, 1);
     }
 
-    public override bool Equals(Parallelogram2D? other) => Corners.SetEquals(other?.Corners);
+    public override bool Equals(Parallelogram2D? other) => Vertices.SetEquals(other?.Vertices);
 
     public override Parallelogram2D MirrorAt(Line2D axis) => new(BottomLeft.MirrorAt(axis), BottomRight.MirrorAt(axis), TopRight.MirrorAt(axis), TopLeft.MirrorAt(axis));
 
@@ -920,7 +926,7 @@ public class Rectangle2D
         return new AxisAlignedRectangle2D((x_min, y_min), (x_max, y_max));
     }
 
-    public static AxisAlignedRectangle2D CreateAxisAlignedBoundingBox(params Shape2D[] shapes) => CreateAxisAlignedBoundingBox(shapes.SelectMany(s => s.AxisAlignedBoundingBox.Corners).ToArray());
+    public static AxisAlignedRectangle2D CreateAxisAlignedBoundingBox(params Shape2D[] shapes) => CreateAxisAlignedBoundingBox(shapes.SelectMany(s => s.AxisAlignedBoundingBox.Vertices).ToArray());
 }
 
 public sealed class AxisAlignedRectangle2D
@@ -964,7 +970,7 @@ public sealed class AxisAlignedRectangle2D
     public new AxisAlignedRectangle2D MirrorAt(Line2D axis)
     {
         if (axis.OrientationAngle.IsMultipleOf(Scalar.PiHalf))
-            return CreateAxisAlignedBoundingBox(Corners.ToArray(c => c.MirrorAt(axis)));
+            return CreateAxisAlignedBoundingBox(Vertices.ToArray(c => c.MirrorAt(axis)));
         else
             throw new ArgumentException("The mirror axis must be either the horizontal (X) or vertical (Y) axis.");
     }
