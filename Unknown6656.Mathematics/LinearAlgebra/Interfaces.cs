@@ -536,7 +536,7 @@ public interface IScalar<Field>
 /// <typeparam name="Scalar">Generic Scalar value type</typeparam>
 /// <typeparam name="raw">The underlying generic scalar value data type</typeparam>
 public static class Algebra<Scalar>
-    where Scalar : unmanaged, IField<Scalar>
+    where Scalar : struct, IField<Scalar>
 {
     public interface IVectorSpace
         : IGroup

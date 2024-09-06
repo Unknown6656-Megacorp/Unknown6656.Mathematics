@@ -17,7 +17,7 @@ namespace Unknown6656.Mathematics.LinearAlgebra;
 
 [Serializable]
 public sealed unsafe class CompressedStorageFormat<Field>
-    where Field : unmanaged, IField<Field>
+    where Field : struct, IField<Field>
 {
     public (int Columns, int Rows) Dimensions { get; }
     public Field[] Values { get; }
