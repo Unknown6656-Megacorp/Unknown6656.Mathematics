@@ -13,7 +13,7 @@ using Unknown6656.Mathematics.Numerics;
 using Unknown6656.Generics;
 using Unknown6656.Common;
 
-using static System.Math;
+//using static System.Math;
 
 namespace Unknown6656.Mathematics.Analysis;
 
@@ -194,7 +194,8 @@ public class Polynomial<Function, T>
     }
 
     private Polynomial(T[] coefficients, bool _)
-        : base(x => coefficients.Reverse().Aggregate((acc, c) => acc.Multiply(x).Add(c)))
+        : base(x => Enumerable.Reverse(coefficients)
+                              .Aggregate((acc, c) => acc.Multiply(x).Add(c)))
     {
         _coefficients = coefficients;
         Inverse = new Function<T, T>(x => Evaluate(x).MultiplicativeInverse);
@@ -202,12 +203,11 @@ public class Polynomial<Function, T>
 
     private static T[] SanitizeCoefficients(T[] coefficients)
     {
-        coefficients = coefficients.Reverse()
-                                   .SkipWhile(c => c.IsZero)
-                                   .Reverse()
-                                   .ToArray();
+        coefficients = [.. Enumerable.Reverse(coefficients)
+                                     .SkipWhile(c => c.IsZero)
+                                     .Reverse()];
 
-        return coefficients is { Length: 0 } c ? ([default]) : coefficients;
+        return coefficients is { Length: 0 } c ? [default] : coefficients;
     }
 
     #endregion
@@ -690,14 +690,14 @@ public partial class Polynomial
         {
             ++iterations;
 
-            while (Abs(δ[x]) < 1e-5)
+            while (Scalar.Abs(δ[x]) < 1e-5)
                 x += 1e-5;
 
             epsilon = -f[x] / δ[x];
 
             x += epsilon;
         }
-        while ((Abs(epsilon) > Scalar.ComputationalEpsilon) && (iterations < 500));
+        while ((Scalar.Abs(epsilon) > Scalar.ComputationalEpsilon) && (iterations < 500));
 
         return x;
     }
@@ -790,7 +790,7 @@ public partial class Polynomial
         {
             Scalar i = φ < 0 ? -1 : 1;
 
-            return i * Exp(Log(φ * i) / τ);
+            return i * Scalar.Exp(Scalar.Log(φ * i) / τ);
         }
 
         Scalar a = B / A;
@@ -820,7 +820,7 @@ public partial class Polynomial
             u = root(-q / 2 + D.Sqrt(), 3);
             v = root(-q / 2 - D.Sqrt(), 3);
 
-            Complex x2 = (-(u + v) / 2 + a3, Sqrt(3) / 2 * (u - v));
+            Complex x2 = (-(u + v) / 2 + a3, Scalar.Sqrt(3) / 2 * (u - v));
 
             yield return (u + v + a3, 0);
             yield return x2;
@@ -828,17 +828,17 @@ public partial class Polynomial
         }
         else
         {
-            Scalar r = Sqrt(-p * p * p / 27);
-            Scalar α = Atan(Sqrt(-D) / -q * 2);
+            Scalar r = Scalar.Sqrt(-p * p * p / 27);
+            Scalar α = Scalar.Atan(Scalar.Sqrt(-D) / -q * 2);
 
             if (q > 0)
-                α = 2.0 * PI - α;
+                α = 2.0 * Scalar.Pi - α;
 
             Scalar rr = root(r, 3);
 
-            yield return (rr * (Cos((6 * PI - α) / 3) + Cos(α / 3.0)) + a3, 0);
-            yield return (rr * (Cos((2 * PI + α) / 3) + Cos((4 * PI - α) / 3)) + a3, 0);
-            yield return (rr * (Cos((4 * PI + α) / 3) + Cos((2 * PI - α) / 3)) + a3, 0);
+            yield return (rr * (Scalar.Cos((3 * Scalar.Tau - α) / 3) + Scalar.Cos(α / 3.0)) + a3, 0);
+            yield return (rr * (Scalar.Cos((Scalar.Tau + α) / 3) + Scalar.Cos((2 * Scalar.Tau - α) / 3)) + a3, 0);
+            yield return (rr * (Scalar.Cos((2 * Scalar.Tau + α) / 3) + Scalar.Cos((Scalar.Tau - α) / 3)) + a3, 0);
         }
     }
 
